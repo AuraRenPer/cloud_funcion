@@ -1,10 +1,21 @@
+const express = require("express");
 const functions = require("@google-cloud/functions-framework");
-const register = require("./functions/register/index");
-const login = require("./functions/login/index");
-const updateUser = require("./functions/updateUser/index");
-const deleteUser = require("./functions/deleteUser/index");
+const cors = require("cors");
 
-functions.http("register", register.register);
-functions.http("login", login.login);
-functions.http("updateUser", updateUser.updateUser);
-functions.http("deleteUser", deleteUser.deleteUser);
+const register = require("./functions/register/index").register;
+const login = require("./functions/login/index").login;
+const updateUser = require("./functions/update/index").updateUser;
+const deleteUser = require("./functions/delete/index").deleteUser;
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+// Rutas para cada función
+app.post("/register", register);
+app.post("/login", login);
+app.put("/updateUser", updateUser);
+app.delete("/deleteUser", deleteUser);
+
+// Exportar la función para Google Cloud Functions
+functions.http("uteq-api", app);

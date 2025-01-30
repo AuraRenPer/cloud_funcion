@@ -10,7 +10,7 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-exports.login = async (req, res) => {
+async function login (req, res) {
   cors(corsOptions)(req, res, async () => {
     const { email, password } = req.body;
 
@@ -59,3 +59,6 @@ exports.login = async (req, res) => {
     }
   });
 };
+
+// 📌 Exportar la función para ser usada en `src/index.js`
+module.exports = { login };

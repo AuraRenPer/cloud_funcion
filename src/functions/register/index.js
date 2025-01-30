@@ -58,5 +58,5 @@ async function register(req, res) {
   }
 }
 
-// 📌 Exportar la función para Google Cloud Functions
-functions.http("register", register);
+// 📌 Exportar la función para ser usada en `src/index.js`
+module.exports = { register };

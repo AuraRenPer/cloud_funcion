@@ -7,7 +7,7 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-exports.updateUser = async (req, res) => {
+async function updateUser  (req, res) {
   cors(corsOptions)(req, res, async () => {
     const { userId, nombre, apellido_paterno, apellido_materno, email } = req.body;
 
@@ -36,3 +36,6 @@ exports.updateUser = async (req, res) => {
     }
   });
 };
+
+// 📌 Exportar la función para ser usada en `src/index.js`
+module.exports = { updateUser };

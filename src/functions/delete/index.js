@@ -7,7 +7,7 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-exports.deleteUser = async (req, res) => {
+async function deleteUser (req, res)  {
   cors(corsOptions)(req, res, async () => {
     const { userId } = req.body;
 
@@ -36,3 +36,5 @@ exports.deleteUser = async (req, res) => {
     }
   });
 };
+// 📌 Exportar la función para ser usada en `src/index.js`
+module.exports = { deleteUser };
