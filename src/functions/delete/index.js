@@ -1,40 +1,48 @@
-const connectDB = require('./db');
+const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const cors = require('cors');
+const moment = require('moment');
+
+moment.locale('es');
+const { Storage } = require('@google-cloud/storage');
 
 const corsOptions = {
   origin: '*',
   optionsSuccessStatus: 200
 };
 
-async function deleteUser (req, res)  {
-  cors(corsOptions)(req, res, async () => {
-    const { userId } = req.body;
+const storage = new Storage();
+const bucketName = 'clinic-backup';
 
-    if (!userId) {
-      return res.status(400).json({ message: 'Se requiere el ID del usuario' });
+exports.deleteUser = async (req, res) => {
+  cors(corsOptions)(req, res, async () => {
+    const { id } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ message: 'El ID del usuario es obligatorio' });
     }
 
+    const uri = 'mongodb+srv://vercel-admin-user-65fb2e3d44111d563879d1a1:C1VKKnDwRgB8POkb@cluster0.thoslsf.mongodb.net/myFirstDatabase';
+
     try {
-      const db = await connectDB();
-      const usersCollection = db.collection('users');
+      const client = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+      const db = client.db('myFirstDatabase');
+      const usersCollection = db.collection('usuarios');
 
-      const deletedUser = await usersCollection.updateOne(
-        { _id: new ObjectId(userId) },
-        { $set: { eliminado: true } } // Eliminación lógica
-      );
+      const existingUser = await usersCollection.findOne({ _id: new ObjectId(id) });
 
-      if (deletedUser.matchedCount === 0) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
+      if (!existingUser) {
+        res.status(404).json({ message: 'Usuario no encontrado' });
+      } else {
+        await usersCollection.updateOne({ _id: new ObjectId(id) }, { $set: { activo: false } });
+
+        res.status(200).json({ message: 'Usuario eliminado lógicamente' });
       }
 
-      res.status(200).json({ message: 'Usuario eliminado correctamente' });
-
+      await client.close();
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: 'Error interno del servidor' });
     }
   });
 };
-// 📌 Exportar la función para ser usada en `src/index.js`
-module.exports = { deleteUser };
