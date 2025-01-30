@@ -1,15 +1,13 @@
 {
   "name": "cloud-functions-uteq",
   "version": "1.0.0",
-  "description": "API para registro, login, actualización y eliminación de usuarios",
-  "main": "index.js",
+  "description": "functions uteq",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "deploy": "gcloud functions deploy uteq-api --region=us-central1 --gen2 --entry-point=uteq-api --runtime=nodejs20 --trigger-http --allow-unauthenticated --source=."
+    "deploy": "gcloud functions deploy uteq-register --entry-point=register --runtime=nodejs20 --trigger-http --allow-unauthenticated --source=src"
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^3.4.5",
-    "@google-cloud/storage": "^6.5.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
