@@ -1,0 +1,694 @@
+[m[1mNAME[m
+    gcloud functions deploy - create or update a Google Cloud Function
+
+[m[1mSYNOPSIS[m
+    [1mgcloud functions deploy[m ([4mNAME[m : [1m--region[m=[4mREGION[m)
+        [[1m--[no-]allow-unauthenticated[m] [[1m--concurrency[m=[4mCONCURRENCY[m]
+        [[1m--docker-registry[m=[4mDOCKER_REGISTRY[m] [[1m--egress-settings[m=[4mEGRESS_SETTINGS[m]
+        [[1m--entry-point[m=[4mENTRY_POINT[m] [[1m--gen2[m] [[1m--ignore-file[m=[4mIGNORE_FILE[m]
+        [[1m--ingress-settings[m=[4mINGRESS_SETTINGS[m] [[1m--retry[m]
+        [[1m--run-service-account[m=[4mRUN_SERVICE_ACCOUNT[m] [[1m--runtime[m=[4mRUNTIME[m]
+        [[1m--runtime-update-policy[m=[4mRUNTIME_UPDATE_POLICY[m]
+        [[1m--security-level[m=[4mSECURITY_LEVEL[m; default="secure-always"]
+        [[1m--serve-all-traffic-latest-revision[m]
+        [[1m--service-account[m=[4mSERVICE_ACCOUNT[m] [[1m--source[m=[4mSOURCE[m]
+        [[1m--stage-bucket[m=[4mSTAGE_BUCKET[m] [[1m--timeout[m=[4mTIMEOUT[m]
+        [[1m--trigger-location[m=[4mTRIGGER_LOCATION[m]
+        [[1m--trigger-service-account[m=[4mTRIGGER_SERVICE_ACCOUNT[m]
+        [[1m--update-labels[m=[[4mKEY[m=[4mVALUE[m,...]]
+        [[1m--binary-authorization[m=[4mBINARY_AUTHORIZATION[m
+          | [1m--clear-binary-authorization[m]
+        [[1m--build-env-vars-file[m=[4mFILE_PATH[m | [1m--clear-build-env-vars[m
+          | [1m--set-build-env-vars[m=[[4mKEY[m=[4mVALUE[m,...]
+          | [1m--remove-build-env-vars[m=[[4mKEY[m,...]
+          [1m--update-build-env-vars[m=[[4mKEY[m=[4mVALUE[m,...]]
+        [[1m--build-service-account[m=[4mBUILD_SERVICE_ACCOUNT[m
+          | [1m--clear-build-service-account[m]
+        [[1m--build-worker-pool[m=[4mBUILD_WORKER_POOL[m | [1m--clear-build-worker-pool[m]
+        [[1m--clear-docker-repository[m | [1m--docker-repository[m=[4mDOCKER_REPOSITORY[m]
+        [[1m--clear-env-vars[m | [1m--env-vars-file[m=[4mFILE_PATH[m
+          | [1m--set-env-vars[m=[[4mKEY[m=[4mVALUE[m,...]
+          | [1m--remove-env-vars[m=[[4mKEY[m,...] [1m--update-env-vars[m=[[4mKEY[m=[4mVALUE[m,...]]
+        [[1m--clear-kms-key[m | [1m--kms-key[m=[4mKMS_KEY[m]
+        [[1m--clear-labels[m | [1m--remove-labels[m=[[4mKEY[m,...]]
+        [[1m--clear-max-instances[m | [1m--max-instances[m=[4mMAX_INSTANCES[m]
+        [[1m--clear-min-instances[m | [1m--min-instances[m=[4mMIN_INSTANCES[m]
+        [[1m--clear-secrets[m
+          | [1m--set-secrets[m=[[4mSECRET_ENV_VAR[m=[4mSECRET_VALUE_REF[m,
+          /[4msecret_path[m=[4mSECRET_VALUE_REF[m,
+          /[4mmount_path[m:/[4msecret_file_path[m=[4mSECRET_VALUE_REF[m,...]
+          | [1m--remove-secrets[m=[[4mSECRET_ENV_VAR[m,
+          /[4msecret_path[m,/[4mmount_path[m:/[4msecret_file_path[m,...]
+          [1m--update-secrets[m=[[4mSECRET_ENV_VAR[m=[4mSECRET_VALUE_REF[m,
+          /[4msecret_path[m=[4mSECRET_VALUE_REF[m,
+          /[4mmount_path[m:/[4msecret_file_path[m=[4mSECRET_VALUE_REF[m,...]]
+        [[1m--clear-vpc-connector[m | [1m--vpc-connector[m=[4mVPC_CONNECTOR[m]
+        [[1m--memory[m=[4mMEMORY[m : [1m--cpu[m=[4mCPU[m]
+        [[1m--trigger-bucket[m=[4mTRIGGER_BUCKET[m | [1m--trigger-http[m
+          | [1m--trigger-topic[m=[4mTRIGGER_TOPIC[m
+          | [1m--trigger-event[m=[4mEVENT_TYPE[m [1m--trigger-resource[m=[4mRESOURCE[m
+          | [1m--trigger-event-filters[m=[[4mATTRIBUTE[m=[4mVALUE[m,...]
+          [1m--trigger-event-filters-path-pattern[m=[[4mATTRIBUTE[m=[4mPATH_PATTERN[m,...]]
+        [[4mGCLOUD_WIDE_FLAG ...[m]
+
+[m[1mDESCRIPTION[m
+    Create or update a Google Cloud Function.
+
+[m[1mEXAMPLES[m
+    To deploy a function that is triggered by write events on the document
+    [1m[1;4m/messages/{pushId}[1m[m, run:
+
+        $ gcloud functions deploy my_function --runtime=python37 \
+            --trigger-event=providers/cloud.firestore/eventTypes/\
+        document.write \
+            --trigger-resource=projects/project_id/databases/(default)/\
+        documents/messages/{pushId}
+
+    See https://cloud.google.com/functions/docs/calling for more details of
+    using other types of resource as triggers.
+
+[m[1mPOSITIONAL ARGUMENTS[m
+     Function resource - The Cloud Function name to deploy. The arguments in
+     this group can be used to specify the attributes of this resource. (NOTE)
+     Some attributes are not given arguments in this group but can be set in
+     other ways.
+
+     To set the [1mproject[m attribute:
+      * provide the argument [1mNAME[m on the command line with a fully specified
+        name;
+      * provide the argument [1m--project[m on the command line;
+      * set the property [1mcore/project[m.
+
+     This must be specified.
+
+       [4mNAME[m
+          ID of the function or fully qualified identifier for the function.
+
+          To set the [1mfunction[m attribute:
+          + provide the argument [1mNAME[m on the command line.
+
+          This positional argument must be specified if any of the other
+          arguments in this group are specified.
+
+       [1m--region[m=[4mREGION[m
+          The Cloud region for the function. Overrides the default
+          [1mfunctions/region[m property value for this command invocation.
+
+          To set the [1mregion[m attribute:
+          + provide the argument [1mNAME[m on the command line with a fully
+            specified name;
+          + provide the argument [1m--region[m on the command line;
+          + set the property [1mfunctions/region[m.
+
+[m[1mFLAGS[m
+     [1m--[no-]allow-unauthenticated[m
+        If set, makes this a public function. This will allow all callers,
+        without checking authentication. Use [1m--allow-unauthenticated[m to enable
+        and [1m--no-allow-unauthenticated[m to disable.
+
+     [1m--concurrency[m=[4mCONCURRENCY[m
+        Set the maximum number of concurrent requests allowed per container
+        instance. Leave concurrency unspecified to receive the server default
+        value.
+
+     [1m--docker-registry[m=[4mDOCKER_REGISTRY[m
+        Docker Registry to use for storing the function's Docker images. The
+        option [1martifact-registry[m is used by default.
+
+        Warning: Artifact Registry and Container Registry have different image
+        storage costs. For more details, please see
+        https://cloud.google.com/functions/pricing#deployment_costs.
+
+        [4mDOCKER_REGISTRY[m must be one of: [1martifact-registry[m, [1mcontainer-registry[m.
+
+     [1m--egress-settings[m=[4mEGRESS_SETTINGS[m
+        Egress settings controls what traffic is diverted through the VPC
+        Access Connector resource. By default [1mprivate-ranges-only[m will be used.
+        [4mEGRESS_SETTINGS[m must be one of: [1mprivate-ranges-only[m, [1mall[m.
+
+     [1m--entry-point[m=[4mENTRY_POINT[m
+        Name of a Google Cloud Function (as defined in source code) that will
+        be executed. Defaults to the resource name suffix (ID of the function),
+        if not specified.
+
+     [1m--gen2[m
+        If enabled, this command will use Cloud Functions (Second generation).
+        If disabled with [1m--no-gen2[m, Cloud Functions (First generation) will be
+        used. If not specified, the value of this flag will be taken from the
+        [1mfunctions/gen2[m configuration property. If the [1mfunctions/gen2[m
+        configuration property is not set, defaults to looking up the given
+        function and using its generation.
+
+     [1m--ignore-file[m=[4mIGNORE_FILE[m
+        Override the .gcloudignore file in the source directory and use the
+        specified file instead. By default, the source directory is your
+        current directory. Note that it could be changed by the --source flag,
+        in which case your .gcloudignore file will be searched in the
+        overridden directory. For example, [1m--ignore-file=.mygcloudignore[m
+        combined with [1m--source=./mydir[m would point to [1m./mydir/.mygcloudignore[m
+
+     [1m--ingress-settings[m=[4mINGRESS_SETTINGS[m
+        Ingress settings controls what traffic can reach the function. By
+        default [1mall[m will be used. [4mINGRESS_SETTINGS[m must be one of: [1mall[m,
+        [1minternal-only[m, [1minternal-and-gclb[m.
+
+     [1m--retry[m
+        If specified, then the function will be retried in case of a failure.
+
+     [1m--run-service-account[m=[4mRUN_SERVICE_ACCOUNT[m
+        The email address of the IAM service account associated with the Cloud
+        Run service for the function. The service account represents the
+        identity of the running function, and determines what permissions the
+        function has.
+
+        If not provided, the function will use the project's default service
+        account for Compute Engine.
+
+     [1m--runtime[m=[4mRUNTIME[m
+        Runtime in which to run the function.
+
+        Required when deploying a new function; optional when updating an
+        existing function.
+
+        For a list of available runtimes, run [1mgcloud functions runtimes list[m.
+
+     [1m--runtime-update-policy[m=[4mRUNTIME_UPDATE_POLICY[m
+        Runtime update policy for the function being deployed. The option
+        [1mautomatic[m is used by default. [4mRUNTIME_UPDATE_POLICY[m must be one of:
+        [1mautomatic[m, [1mon-deploy[m.
+
+     [1m--security-level[m=[4mSECURITY_LEVEL[m; default="secure-always"
+        Security level controls whether a function's URL supports HTTPS only or
+        both HTTP and HTTPS. By default, [1msecure-always[m will be used, meaning
+        only HTTPS is supported. [4mSECURITY_LEVEL[m must be one of: [1msecure-always[m,
+        [1msecure-optional[m.
+
+     [1m--serve-all-traffic-latest-revision[m
+        If specified, latest function revision will be served all traffic.
+
+     [1m--service-account[m=[4mSERVICE_ACCOUNT[m
+        The email address of the IAM service account associated with the
+        function at runtime. The service account represents the identity of the
+        running function, and determines what permissions the function has.
+
+        If not provided, the function will use the project's default service
+        account.
+
+     [1m--source[m=[4mSOURCE[m
+        Location of source code to deploy.
+
+        Location of the source can be one of the following three options:
+
+        * Source code in Google Cloud Storage (must be a [1m.zip[m archive),
+        * Reference to source repository or,
+        * Local filesystem path (root directory of function source).
+
+        Note that, depending on your runtime type, Cloud Functions will look
+        for files with specific names for deployable functions. For Node.js,
+        these filenames are [1mindex.js[m or [1mfunction.js[m. For Python, this is
+        [1mmain.py[m.
+
+        If you do not specify the [1m--source[m flag:
+
+        * The current directory will be used for new function deployments.
+        * If the function was previously deployed using a local filesystem
+          path, then the function's source code will be updated using the
+          current directory.
+        * If the function was previously deployed using a Google Cloud
+          Storage location or a source repository, then the function's source
+          code will not be updated.
+
+        The value of the flag will be interpreted as a Cloud Storage location,
+        if it starts with [1mgs://[m.
+
+        The value will be interpreted as a reference to a source repository, if
+        it starts with [1mhttps://[m.
+
+        Otherwise, it will be interpreted as the local filesystem path. When
+        deploying source from the local filesystem, this command skips files
+        specified in the [1m.gcloudignore[m file (see [1mgcloud topic gcloudignore[m for
+        more information). If the [1m.gcloudignore[m file doesn't exist, the command
+        will try to create it.
+
+        The minimal source repository URL is:
+        [1mhttps://source.developers.google.com/projects/${PROJECT}/repos/${REPO}[m
+
+        By using the URL above, sources from the root directory of the
+        repository on the revision tagged [1mmaster[m will be used.
+
+        If you want to deploy from a revision different from [1mmaster[m, append one
+        of the following three sources to the URL:
+
+        * [1m/revisions/${REVISION}[m,
+        * [1m/moveable-aliases/${MOVEABLE_ALIAS}[m,
+        * [1m/fixed-aliases/${FIXED_ALIAS}[m.
+
+        If you'd like to deploy sources from a directory different from the
+        root, you must specify a revision, a moveable alias, or a fixed alias,
+        as above, and append [1m/paths/${PATH_TO_SOURCES_DIRECTORY}[m to the URL.
+
+        Overall, the URL should match the following regular expression:
+
+            ^https://source\.developers\.google\.com/projects/
+            (?<accountId>[^/]+)/repos/(?<repoName>[^/]+)
+            (((/revisions/(?<commit>[^/]+))|(/moveable-aliases/(?<branch>[^/]+))|
+            (/fixed-aliases/(?<tag>[^/]+)))(/paths/(?<path>.*))?)?$
+
+        An example of a validly formatted source repository URL is:
+
+            https://source.developers.google.com/projects/123456789/repos/testrepo/
+            moveable-aliases/alternate-branch/paths/path-to=source
+
+     [1m--stage-bucket[m=[4mSTAGE_BUCKET[m
+        When deploying a function from a local directory, this flag's value is
+        the name of the Google Cloud Storage bucket in which source code will
+        be stored. Note that if you set the [1m--stage-bucket[m flag when deploying
+        a function, you will need to specify [1m--source[m or [1m--stage-bucket[m in
+        subsequent deployments to update your source code. To use this flag
+        successfully, the account in use must have permissions to write to this
+        bucket. For help granting access, refer to this guide:
+        https://cloud.google.com/storage/docs/access-control/
+
+     [1m--timeout[m=[4mTIMEOUT[m
+        The function execution timeout, e.g. 30s for 30 seconds. Defaults to
+        original value for existing function or 60 seconds for new functions.
+
+        For GCF 1st gen functions, cannot be more than 540s.
+
+        For GCF 2nd gen functions, cannot be more than 3600s.
+
+        See $ gcloud topic datetimes for information on duration formats.
+
+     [1m--trigger-location[m=[4mTRIGGER_LOCATION[m
+        The location of the trigger, which must be a region or multi-region
+        where the relevant events originate.
+
+     [1m--trigger-service-account[m=[4mTRIGGER_SERVICE_ACCOUNT[m
+        The email address of the IAM service account associated with the
+        Eventarc trigger for the function. This is used for authenticated
+        invocation.
+
+        If not provided, the function will use the project's default service
+        account for Compute Engine.
+
+     [1m--update-labels[m=[[4mKEY[m=[4mVALUE[m,...]
+        List of label KEY=VALUE pairs to update. If a label exists, its value
+        is modified. Otherwise, a new label is created.
+
+        Keys must start with a lowercase character and contain only hyphens
+        ([1m-[m), underscores ([1m_[m), lowercase characters, and numbers. Values must
+        contain only hyphens ([1m-[m), underscores ([1m_[m), lowercase characters, and
+        numbers.
+
+        Label keys starting with [1mdeployment[m are reserved for use by deployment
+        tools and cannot be specified manually.
+
+     At most one of these can be specified:
+
+       [1m--binary-authorization[m=[4mBINARY_AUTHORIZATION[m
+          Name of the Binary Authorization policy that the function image
+          should be checked against when deploying to Cloud Run.
+
+          Example: default
+
+          The flag is only applicable to 2nd gen functions.
+
+       [1m--clear-binary-authorization[m
+          Clears the Binary Authorization policy field.
+
+     At most one of these can be specified:
+
+       [1m--build-env-vars-file[m=[4mFILE_PATH[m
+          Path to a local YAML file with definitions for all build environment
+          variables. All existing build environment variables will be removed
+          before the new build environment variables are added.
+
+       [1m--clear-build-env-vars[m
+          Remove all build environment variables.
+
+       [1m--set-build-env-vars[m=[[4mKEY[m=[4mVALUE[m,...]
+          List of key-value pairs to set as build environment variables. All
+          existing build environment variables will be removed first.
+
+       Only --update-build-env-vars and --remove-build-env-vars can be used
+       together. If both are specified, --remove-build-env-vars will be applied
+       first.
+
+         [1m--remove-build-env-vars[m=[[4mKEY[m,...]
+            List of build environment variables to be removed.
+
+         [1m--update-build-env-vars[m=[[4mKEY[m=[4mVALUE[m,...]
+            List of key-value pairs to set as build environment variables.
+
+     At most one of these can be specified:
+
+       [1m--build-service-account[m=[4mBUILD_SERVICE_ACCOUNT[m
+          IAM service account whose credentials will be used for the build
+          step. Must be of the format
+          projects/${PROJECT_ID}/serviceAccounts/${ACCOUNT_EMAIL_ADDRESS}.
+
+          If not provided, the function will use the project's default service
+          account for Cloud Build.
+
+       [1m--clear-build-service-account[m
+          Clears the build service account field.
+
+     At most one of these can be specified:
+
+       [1m--build-worker-pool[m=[4mBUILD_WORKER_POOL[m
+          Name of the Cloud Build Custom Worker Pool that should be used to
+          build the function. The format of this field is
+          [1mprojects/${PROJECT}/locations/${LOCATION}/workerPools/${WORKERPOOL}[m
+          where ${PROJECT} is the project id and ${LOCATION} is the location
+          where the worker pool is defined and ${WORKERPOOL} is the short name
+          of the worker pool.
+
+       [1m--clear-build-worker-pool[m
+          Clears the Cloud Build Custom Worker Pool field.
+
+     At most one of these can be specified:
+
+       [1m--clear-docker-repository[m
+          Clears the Docker repository configuration of the function.
+
+       [1m--docker-repository[m=[4mDOCKER_REPOSITORY[m
+          Sets the Docker repository to be used for storing the Cloud
+          Function's Docker images while the function is being deployed.
+          [1mDOCKER_REPOSITORY[m must be an Artifact Registry Docker repository
+          present in the [1msame[m project and location as the Cloud Function.
+
+          **Preview:** for 2nd gen functions, a Docker Artifact registry
+          repository in a different project and/or location may be used.
+          Additional requirements apply, see
+          https://cloud.google.com/functions/docs/building#image_registry
+
+          The repository name should match one of these patterns:
+
+          + [1mprojects/${PROJECT}/locations/${LOCATION}/repositories/${REPOSITORY}[m,
+          + [1m{LOCATION}-docker.pkg.dev/{PROJECT}/{REPOSITORY}[m.
+
+          where [1m${PROJECT}[m is the project, [1m${LOCATION}[m is the location of the
+          repository and [1m${REPOSITORY}[m is a valid repository ID.
+
+     At most one of these can be specified:
+
+       [1m--clear-env-vars[m
+          Remove all environment variables.
+
+       [1m--env-vars-file[m=[4mFILE_PATH[m
+          Path to a local YAML file with definitions for all environment
+          variables. All existing environment variables will be removed before
+          the new environment variables are added.
+
+       [1m--set-env-vars[m=[[4mKEY[m=[4mVALUE[m,...]
+          List of key-value pairs to set as environment variables. All existing
+          environment variables will be removed first.
+
+       Only --update-env-vars and --remove-env-vars can be used together. If
+       both are specified, --remove-env-vars will be applied first.
+
+         [1m--remove-env-vars[m=[[4mKEY[m,...]
+            List of environment variables to be removed.
+
+         [1m--update-env-vars[m=[[4mKEY[m=[4mVALUE[m,...]
+            List of key-value pairs to set as environment variables.
+
+     At most one of these can be specified:
+
+       [1m--clear-kms-key[m
+          Clears the KMS crypto key used to encrypt the function.
+
+       [1m--kms-key[m=[4mKMS_KEY[m
+          Sets the user managed KMS crypto key used to encrypt the Cloud
+          Function and its resources.
+
+          The KMS crypto key name should match the pattern
+          [1mprojects/${PROJECT}/locations/${LOCATION}/keyRings/${KEYRING}/cryptoKeys/${CRYPTOKEY}[m
+          where ${PROJECT} is the project, ${LOCATION} is the location of the
+          key ring, and ${KEYRING} is the key ring that contains the
+          ${CRYPTOKEY} crypto key.
+
+          If this flag is set, then a Docker repository created in Artifact
+          Registry must be specified using the [1m--docker-repository[m flag and the
+          repository must be encrypted using the [1msame[m KMS key.
+
+     At most one of these can be specified:
+
+       [1m--clear-labels[m
+          Remove all labels. If [1m--update-labels[m is also specified then
+          [1m--clear-labels[m is applied first.
+
+          For example, to remove all labels:
+
+              $ gcloud functions deploy --clear-labels
+
+          To remove all existing labels and create two new labels, [1m[1;4mfoo[1m[m and [1m[1;4mbaz[1m[m:
+
+              $ gcloud functions deploy --clear-labels \
+                --update-labels foo=bar,baz=qux
+
+       [1m--remove-labels[m=[[4mKEY[m,...]
+          List of label keys to remove. If a label does not exist it is
+          silently ignored. If [1m--update-labels[m is also specified then
+          [1m--update-labels[m is applied first.Label keys starting with [1mdeployment[m
+          are reserved for use by deployment tools and cannot be specified
+          manually.
+
+     At most one of these can be specified:
+
+       [1m--clear-max-instances[m
+          Clears the maximum instances setting for the function.
+
+          If it's any 2nd gen function or a 1st gen HTTP function, this flag
+          sets maximum instances to 0, which means there is no limit to maximum
+          instances. If it's an event-driven 1st gen function, this flag sets
+          maximum instances to 3000, which is the default value for 1st gen
+          functions.
+
+       [1m--max-instances[m=[4mMAX_INSTANCES[m
+          Sets the maximum number of instances for the function. A function
+          execution that would exceed max-instances times out.
+
+     At most one of these can be specified:
+
+       [1m--clear-min-instances[m
+          Clears the minimum instances setting for the function.
+
+       [1m--min-instances[m=[4mMIN_INSTANCES[m
+          Sets the minimum number of instances for the function. This is
+          helpful for reducing cold start times. Defaults to zero.
+
+     At most one of these can be specified:
+
+       [1m--clear-secrets[m
+          Remove all secret environment variables and volumes.
+
+       [1m--set-secrets[m=[[4mSECRET_ENV_VAR[m=[4mSECRET_VALUE_REF[m,/[4msecret_path[m=[4mSECRET_VALUE_REF[m,/[4mmount_path[m:/[4msecret_file_path[m=[4mSECRET_VALUE_REF[m,...]
+          List of secret environment variables and secret volumes to configure.
+          Existing secrets configuration will be overwritten.
+
+          You can reference a secret value referred to as [1mSECRET_VALUE_REF[m in
+          the help text in the following ways.
+
+          + Use [1m${SECRET}:${VERSION}[m if you are referencing a secret in the
+            same project, where [1m${SECRET}[m is the name of the secret in secret
+            manager (not the full resource name) and [1m${VERSION}[m is the version
+            of the secret which is either a [1mpositive integer[m or the label
+            [1mlatest[m. For example, use [1mSECRET_FOO:1[m to reference version [1m1[m of the
+            secret [1mSECRET_FOO[m which exists in the same project as the function.
+
+          + Use [1mprojects/${PROJECT}/secrets/${SECRET}/versions/${VERSION}[m or
+            [1mprojects/${PROJECT}/secrets/${SECRET}:${VERSION}[m to reference a
+            secret version using the full resource name, where [1m${PROJECT}[m is
+            either the project number ([1mpreferred[m) or the project ID of the
+            project which contains the secret, [1m${SECRET}[m is the name of the
+            secret in secret manager (not the full resource name) and
+            [1m${VERSION}[m is the version of the secret which is either a [1mpositive
+            integer[m or the label [1mlatest[m. For example, use
+            [1mprojects/1234567890/secrets/SECRET_FOO/versions/1[m or
+            [1mprojects/project_id/secrets/SECRET_FOO/versions/1[m to reference
+            version [1m1[m of the secret [1mSECRET_FOO[m that exists in the project
+            [1m1234567890[m or [1mproject_id[m respectively. This format is useful when
+            the secret exists in a different project.
+
+          To configure the secret as an environment variable, use
+          [1mSECRET_ENV_VAR=SECRET_VALUE_REF[m. To use the value of the secret, read
+          the environment variable [1mSECRET_ENV_VAR[m as you would normally do in
+          the function's programming language.
+
+          We recommend using a [1mnumeric[m version for secret environment variables
+          as any updates to the secret value are not reflected until new clones
+          start.
+
+          To mount the secret within a volume use [1m/secret_path=SECRET_VALUE_REF[m
+          or [1m/mount_path:/secret_file_path=SECRET_VALUE_REF[m. To use the value
+          of the secret, read the file at [1m/secret_path[m as you would normally do
+          in the function's programming language.
+
+          For example, [1m/etc/secrets/secret_foo=SECRET_FOO:latest[m or
+          [1m/etc/secrets:/secret_foo=SECRET_FOO:latest[m will make the value of the
+          [1mlatest[m version of the secret [1mSECRET_FOO[m available in a file
+          [1msecret_foo[m under the directory [1m/etc/secrets[m. [1m/etc/secrets[m will be
+          considered as the [1mmount path[m and will [1mnot[m be available for any other
+          volume.
+
+          We recommend referencing the [1mlatest[m version when using secret volumes
+          so that the secret's value changes are reflected immediately.
+
+       Only [1m--update-secrets[m and [1m--remove-secrets[m can be used together. If both
+       are specified, then [1m--remove-secrets[m will be applied first.
+
+         [1m--remove-secrets[m=[[4mSECRET_ENV_VAR[m,/[4msecret_path[m,/[4mmount_path[m:/[4msecret_file_path[m,...]
+            List of secret environment variable names and secret paths to
+            remove.
+
+            Existing secrets configuration of secret environment variable names
+            and secret paths not specified in this list will be preserved.
+
+            To remove a secret environment variable, use the name of the
+            environment variable [1mSECRET_ENV_VAR[m.
+
+            To remove a file within a secret volume or the volume itself, use
+            the secret path as the key (either [1m/secret_path[m or
+            [1m/mount_path:/secret_file_path[m).
+
+         [1m--update-secrets[m=[[4mSECRET_ENV_VAR[m=[4mSECRET_VALUE_REF[m,/[4msecret_path[m=[4mSECRET_VALUE_REF[m,/[4mmount_path[m:/[4msecret_file_path[m=[4mSECRET_VALUE_REF[m,...]
+            List of secret environment variables and secret volumes to update.
+            Existing secrets configuration not specified in this list will be
+            preserved.
+
+     At most one of these can be specified:
+
+       [1m--clear-vpc-connector[m
+          Clears the VPC connector field.
+
+       Connector resource - The VPC Access connector that the function can
+       connect to. It can be either the fully-qualified URI, or the short name
+       of the VPC Access connector resource. If the short name is used, the
+       connector must belong to the same project. The format of this field is
+       either [1mprojects/${PROJECT}/locations/${LOCATION}/connectors/${CONNECTOR}[m
+       or [1m${CONNECTOR}[m, where [1m${CONNECTOR}[m is the short name of the VPC Access
+       connector. This represents a Cloud resource. (NOTE) Some attributes are
+       not given arguments in this group but can be set in other ways.
+
+       To set the [1mproject[m attribute:
+        + provide the argument [1m--vpc-connector[m on the command line with a
+          fully specified name;
+        + provide the argument [1m--project[m on the command line;
+        + set the property [1mcore/project[m.
+
+       To set the [1mregion[m attribute:
+        + provide the argument [1m--vpc-connector[m on the command line with a
+          fully specified name;
+        + provide the argument [1m--region[m on the command line;
+        + set the property [1mfunctions/region[m.
+
+         [1m--vpc-connector[m=[4mVPC_CONNECTOR[m
+            ID of the connector or fully qualified identifier for the
+            connector.
+
+            To set the [1mconnector[m attribute:
+            - provide the argument [1m--vpc-connector[m on the command line.
+
+     [1m--memory[m=[4mMEMORY[m
+        Limit on the amount of memory the function can use.
+
+        Allowed values for v1 are: 128MB, 256MB, 512MB, 1024MB, 2048MB, 4096MB,
+        and 8192MB.
+
+        Allowed values for GCF 2nd gen are in the format: <number><unit> with
+        allowed units of "k", "M", "G", "Ki", "Mi", "Gi". Ending 'b' or 'B' is
+        allowed, but both are interpreted as bytes as opposed to bits.
+
+        Examples: 1000000K, 1000000Ki, 256Mb, 512M, 1024Mi, 2G, 4Gi.
+
+        By default, a new function is limited to 256MB of memory. When
+        deploying an update to an existing function, the function keeps its old
+        memory limit unless you specify this flag.
+
+     [1m--cpu[m=[4mCPU[m
+        The number of available CPUs to set. Only valid when [1m--memory=MEMORY[m is
+        specified.
+
+        Examples: .5, 2, 2.0, 2000m.
+
+        By default, a new function's available CPUs is determined based on its
+        memory value.
+
+        When deploying an update that includes memory changes to an existing
+        function, the function's available CPUs will be recalculated based on
+        the new memory unless this flag is specified. When deploying an update
+        that does not include memory changes to an existing function, the
+        function's "available CPUs" setting will keep its old value unless you
+        use this flag to change the setting.
+
+     If you don't specify a trigger when deploying an update to an existing
+     function it will keep its current trigger. You must specify one of the
+     following when deploying a new function:
+      * [1m--trigger-topic[m,
+      * [1m--trigger-bucket[m,
+      * [1m--trigger-http[m,
+      * [1m--trigger-event[m AND [1m--trigger-resource[m,
+      * [1m--trigger-event-filters[m and optionally
+        [1m--trigger-event-filters-path-pattern[m.
+
+     At most one of these can be specified:
+
+       [1m--trigger-bucket[m=[4mTRIGGER_BUCKET[m
+          Google Cloud Storage bucket name. Trigger the function when an object
+          is created or overwritten in the specified Cloud Storage bucket.
+
+       [1m--trigger-http[m
+          Function will be assigned an endpoint, which you can view by using
+          the [1mdescribe[m command. Any HTTP request (of a supported type) to the
+          endpoint will trigger function execution. Supported HTTP request
+          types are: POST, PUT, GET, DELETE, and OPTIONS.
+
+       [1m--trigger-topic[m=[4mTRIGGER_TOPIC[m
+          Name of Pub/Sub topic. Every message published in this topic will
+          trigger function execution with message contents passed as input
+          data. Note that this flag does not accept the format of
+          projects/PROJECT_ID/topics/TOPIC_ID. Use this flag to specify the
+          final element TOPIC_ID. The PROJECT_ID will be read from the active
+          configuration.
+
+       [1m--trigger-event[m=[4mEVENT_TYPE[m
+          Specifies which action should trigger the function. For a list of
+          acceptable values, call [1mgcloud functions event-types list[m.
+
+       [1m--trigger-resource[m=[4mRESOURCE[m
+          Specifies which resource from [1m--trigger-event[m is being observed. E.g.
+          if [1m--trigger-event[m is
+          [1mproviders/cloud.storage/eventTypes/object.change[m, [1m--trigger-resource[m
+          must be a bucket name. For a list of expected resources, call [1mgcloud
+          functions event-types list[m.
+
+       [1m--trigger-event-filters[m=[[4mATTRIBUTE[m=[4mVALUE[m,...]
+          The Eventarc matching criteria for the trigger. The criteria can be
+          specified either as a single comma-separated argument or as multiple
+          arguments. The filters must include the [1m[1;4mtype[1m[m attribute, as well as
+          any other attributes that are expected for the chosen type.
+
+       [1m--trigger-event-filters-path-pattern[m=[[4mATTRIBUTE[m=[4mPATH_PATTERN[m,...]
+          The Eventarc matching criteria for the trigger in path pattern
+          format. The criteria can be specified as a single comma-separated
+          argument or as multiple arguments.
+
+          The provided attribute/value pair will be used with the
+          [1mmatch-path-pattern[m operator to configure the trigger, see
+          https://cloud.google.com/eventarc/docs/reference/rest/v1/projects.locations.triggers#eventfilter
+          and https://cloud.google.com/eventarc/docs/path-patterns for more
+          details about on how to construct path patterns.
+
+          For example, to filter on events for Compute Engine VMs in a given
+          zone:
+          [1m--trigger-event-filters-path-pattern=resourceName='/projects/*/zones/us-central1-a/instances/*'
+
+[m[1mGCLOUD WIDE FLAGS[m
+    These flags are available to all commands: --access-token-file, --account,
+    --billing-project, --configuration, --flags-file, --flatten, --format,
+    --help, --impersonate-service-account, --log-http, --project, --quiet,
+    --trace-token, --user-output-enabled, --verbosity.
+
+    Run [1m$ gcloud help[m for details.
+[m

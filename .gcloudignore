@@ -1,0 +1,5 @@
+# .gcloudignore
+node_modules
+.git
+.gitignore
+.env         // If you keep a local .env, you usually don't want this uploaded
