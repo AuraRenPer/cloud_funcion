@@ -44,10 +44,10 @@ exports.login = async (req, res) => {
           const db = client.db('myFirstDatabase');
           const usersCollection = db.collection('usuarios');
 
-          const user = await usersCollection.findOne({ email });
+          const user = await usersCollection.findOne({ email, activo: true });
 
           if (!user) {
-            res.status(401).json({message: 'Email o contraseña incorrectos'});
+            res.status(401).json({message: 'Email/contraseña incorrectos o usuario inactivo'});
           } else {
             const hash = crypto.createHash('sha256');
             hash.update(password);

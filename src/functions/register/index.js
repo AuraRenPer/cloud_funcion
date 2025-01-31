@@ -62,11 +62,13 @@ exports.register = async (req, res) => {
               email,
               esDoctor: checkMedico,
               password: hashedPassword,
+              activo: true, 
               fecha_registro: fechaCiudadMexico.toDate(),
               fecha_actualizacion: fechaCiudadMexico.toDate(),
               ensayos: [],
               segmentos: []
             };
+            
 
             await usersCollection.insertOne(newUser);
             res.status(201).json({ message: 'Usuario registrado exitosamente' });
