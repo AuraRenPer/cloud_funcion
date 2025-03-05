@@ -1,5 +1,5 @@
 const functions = require("firebase-functions");
-const {db} = require("./firebase.config");
+const {db} = require("./autolavado/config/firebase.config");
 
 // ✅ Crear servicio
 exports.crearServicio = functions.https.onRequest(async (req, res) => {

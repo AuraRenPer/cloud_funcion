@@ -1,5 +1,5 @@
 const functions = require("firebase-functions");
-const {db} = require("./firebase.config");
+const {db} = require("./autolavado/config/firebase.config");
 
 // ✅ Registrar cliente
 exports.registrarCliente = functions.https.onRequest(async (req, res) => {

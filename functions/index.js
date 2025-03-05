@@ -1,41 +1,16 @@
 const functions = require("firebase-functions");
+const express = require("express");
 const cors = require("cors");
-const corsHandler = cors({origin: true});
 
-const admin = require("firebase-admin");
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-const servicios = require("./servicios");
-const clientes = require("./clientes");
+// Importar rutas
+const usuariosRoutes = require("./autolavado/routes/usuarios.routes");
+const serviciosRoutes = require("./autolavado/routes/servicios.routes");
 
-// Inicializar Firebase Admin solo si no está inicializado
-if (admin.apps.length === 0) {
-  admin.initializeApp();
-}
+app.use("/usuarios", usuariosRoutes);
+app.use("/servicios", serviciosRoutes);
 
-// ✅ Wrappers con CORS para cada función de Servicios
-exports.crearServicio = functions.https.onRequest((req, res) =>
-  corsHandler(req, res, () => servicios.crearServicio(req, res)),
-);
-exports.obtenerServicios = functions.https.onRequest((req, res) =>
-  corsHandler(req, res, () => servicios.obtenerServicios(req, res)),
-);
-exports.actualizarServicio = functions.https.onRequest((req, res) =>
-  corsHandler(req, res, () => servicios.actualizarServicio(req, res)),
-);
-exports.eliminarServicio = functions.https.onRequest((req, res) =>
-  corsHandler(req, res, () => servicios.eliminarServicio(req, res)),
-);
-
-// ✅ Wrappers con CORS para cada función de Clientes
-exports.registrarCliente = functions.https.onRequest((req, res) =>
-  corsHandler(req, res, () => clientes.registrarCliente(req, res)),
-);
-exports.obtenerClientes = functions.https.onRequest((req, res) =>
-  corsHandler(req, res, () => clientes.obtenerClientes(req, res)),
-);
-exports.actualizarCliente = functions.https.onRequest((req, res) =>
-  corsHandler(req, res, () => clientes.actualizarCliente(req, res)),
-);
-exports.eliminarCliente = functions.https.onRequest((req, res) =>
-  corsHandler(req, res, () => clientes.eliminarCliente(req, res)),
-);
+exports.api = functions.https.onRequest(app);
