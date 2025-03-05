@@ -9,8 +9,10 @@ app.use(express.json());
 // Importar rutas
 const usuariosRoutes = require("./autolavado/routes/usuarios.routes");
 const serviciosRoutes = require("./autolavado/routes/servicios.routes");
+const proveedoresRoutes = require("./autolavado/routes/proveedores.routes");
 
-app.use("/usuarios", usuariosRoutes);
-app.use("/servicios", serviciosRoutes);
+app.use("/api/usuarios", usuariosRoutes);
+app.use("/api/servicios", serviciosRoutes);
+app.use("/api/proveedores", proveedoresRoutes);
 
 exports.api = functions.https.onRequest(app);
