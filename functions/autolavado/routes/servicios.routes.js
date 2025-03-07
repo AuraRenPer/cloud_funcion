@@ -2,20 +2,18 @@ const express = require("express");
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
-const {verificarToken} = require(
-    "../middlewares/authMiddleware",
-); // Importar middleware
+const {verificarToken} = require("../middlewares/authMiddleware");
 const {
   crearServicio,
-  obtenerServicio,
   obtenerServicios,
+  obtenerServicioPorId,
   actualizarServicio,
   eliminarServicio,
 } = require("../controllers/servicios");
 
-router.post("/crear", verificarToken, crearServicio);
-router.get("/:id", verificarToken, obtenerServicio);
+router.post("/", verificarToken, crearServicio);
 router.get("/", verificarToken, obtenerServicios);
+router.get("/:id", verificarToken, obtenerServicioPorId);
 router.put("/:id", verificarToken, actualizarServicio);
 router.delete("/:id", verificarToken, eliminarServicio);
 

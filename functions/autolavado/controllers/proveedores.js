@@ -1,4 +1,4 @@
-const Proveedor = require("../models/proveedores");
+const Proveedor = require("../models/proveedor");
 
 // Crear un nuevo proveedor
 exports.crearProveedor = async (req, res) => {
