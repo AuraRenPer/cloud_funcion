@@ -5,15 +5,16 @@ const router = express.Router();
 const {verificarToken} = require("../middlewares/authMiddleware");
 const {
   crearProveedor,
-  obtenerProveedor,
   obtenerProveedores,
+  obtenerProveedorPorId,
   actualizarProveedor,
   eliminarProveedor,
 } = require("../controllers/proveedores");
 
-router.post("/crear", verificarToken, crearProveedor);
-router.get("/:id", verificarToken, obtenerProveedor);
+
+router.post("/", verificarToken, crearProveedor);
 router.get("/", verificarToken, obtenerProveedores);
+router.get("/:id", verificarToken, obtenerProveedorPorId);
 router.put("/:id", verificarToken, actualizarProveedor);
 router.delete("/:id", verificarToken, eliminarProveedor);
 
