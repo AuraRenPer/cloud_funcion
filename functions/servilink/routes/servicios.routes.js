@@ -11,10 +11,10 @@ const {
   eliminarServicio,
 } = require("../controllers/servicios");
 
-router.post("/", verificarToken, crearServicio);
-router.get("/", verificarToken, obtenerServicios);
-router.get("/:id", verificarToken, obtenerServicioPorId);
-router.put("/:id", verificarToken, actualizarServicio);
-router.delete("/:id", verificarToken, eliminarServicio);
+router.post("/crearservicio", verificarToken, crearServicio);
+router.get("/obtenerservicios", verificarToken, obtenerServicios);
+router.get("/obtenerservicio/:id", verificarToken, obtenerServicioPorId);
+router.put("/editarservicio/:id", verificarToken, actualizarServicio);
+router.delete("/eliminarservicio/:id", verificarToken, eliminarServicio);
 
 module.exports = router;

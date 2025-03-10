@@ -12,10 +12,10 @@ const {
 } = require("../controllers/proveedores");
 
 
-router.post("/", verificarToken, crearProveedor);
-router.get("/", verificarToken, obtenerProveedores);
-router.get("/:id", verificarToken, obtenerProveedorPorId);
-router.put("/:id", verificarToken, actualizarProveedor);
-router.delete("/:id", verificarToken, eliminarProveedor);
+router.post("/crearproveedor", verificarToken, crearProveedor);
+router.get("/obtenerproveedores", verificarToken, obtenerProveedores);
+router.get("/obtenerproveedor/:id", verificarToken, obtenerProveedorPorId);
+router.put("/actualizarproveedor/:id", verificarToken, actualizarProveedor);
+router.delete("/eliminarproveedor/:id", verificarToken, eliminarProveedor);
 
 module.exports = router;

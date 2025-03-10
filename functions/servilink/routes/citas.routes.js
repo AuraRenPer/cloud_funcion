@@ -12,12 +12,12 @@ const {
 } = require("../controllers/citas");
 
 
-router.post("/", verificarToken, crearCita);
-router.get("/", verificarToken, obtenerCitas);
-router.get("/:id", verificarToken, obtenerCitaPorId);
-router.put("/:id", verificarToken, actualizarCita);
-router.delete("/:id", verificarToken, eliminarCita);
-router.get("/usuario/:idUsuario", verificarToken, obtenerCitasPorUsuario);
+router.post("/crearcita", verificarToken, crearCita);
+router.get("/historialcitas", verificarToken, obtenerCitas);
+router.get("/obtenercita/:id", verificarToken, obtenerCitaPorId);
+router.put("/actualizarcita/:id", verificarToken, actualizarCita);
+router.delete("/eliminarcita/:id", verificarToken, eliminarCita);
+router.get("/usuariocitas/:idUsuario", verificarToken, obtenerCitasPorUsuario);
 
 
 module.exports = router;
