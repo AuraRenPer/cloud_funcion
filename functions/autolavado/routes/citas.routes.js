@@ -8,6 +8,7 @@ const {
   obtenerCitaPorId,
   actualizarCita,
   eliminarCita,
+  obtenerCitasPorUsuario,
 } = require("../controllers/citas");
 
 
@@ -16,5 +17,7 @@ router.get("/", verificarToken, obtenerCitas);
 router.get("/:id", verificarToken, obtenerCitaPorId);
 router.put("/:id", verificarToken, actualizarCita);
 router.delete("/:id", verificarToken, eliminarCita);
+router.get("/usuario/:idUsuario", verificarToken, obtenerCitasPorUsuario);
+
 
 module.exports = router;

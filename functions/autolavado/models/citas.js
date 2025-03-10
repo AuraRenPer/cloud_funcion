@@ -105,6 +105,22 @@ class Citas {
     await db.collection(CITAS_COLLECTION).doc(id).delete();
     return {id, message: "Cita eliminada"};
   }
+
+  /**
+   * Obtiene todas las citas de un cliente.
+   * @param {string} idCliente - ID del cliente.
+   * @return {Promise<Object[]>} Lista de citas.  
+   */
+  static async getByUserId(idUsuario){
+    const snapshot = await db.collection(CITAS_COLLECTION).where("idCliente", "==", idUsuario).get();
+    if (snapshot.empty) {
+      return [];
+    }
+
+    return snapshot.docs.map((doc) => ({id: doc.id, ...doc
+    .data()}
+    ));
+  }
 }
 
 module.exports = Citas;
