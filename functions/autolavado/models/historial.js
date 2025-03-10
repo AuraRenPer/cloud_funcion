@@ -6,7 +6,7 @@ const HISTORIAL_COLLECTION = "historial";
 /**
  * Clase para representar una Historial. (Autolavado)
  */
-class Historiales {
+class Historial {
   /**
   * Constructor de la clase Historials.
   * @param {string} id - ID de la Historial.
@@ -19,7 +19,6 @@ class Historiales {
   *
   */
   constructor(
-      id,
       idCliente,
       idProveedor,
       idServicio,
@@ -27,13 +26,13 @@ class Historiales {
       horaHistorial,
       estatus,
   ) {
-    this.id = id;
     this.idCliente = idCliente;
     this.idProveedor = idProveedor;
     this.idServicio = idServicio;
-    this.idVehiculo = idVehiculo;
-    this.fechaHistorial = fechaHistorial || "No especificada"; // Valor por defecto
-    this.horaHistorial = horaHistorial || "No especificada";
+    this.fechaHistorial = fechaHistorial ||
+    "No especificada"; // Valor por defecto
+    this.horaHistorial = horaHistorial ||
+    "No especificada";
     this.estatus = estatus || "pendiente";
   }
 
@@ -44,7 +43,7 @@ class Historiales {
   async save() {
     const HistorialRef = db.collection(HISTORIAL_COLLECTION).doc();
     await HistorialRef.set({
-      idCliente: this.idCliente,
+      idUsuario: this.idUsuario,
       idProveedor: this.idProveedor,
       idServicio: this.idServicio,
       fechaHistorial: this.fechaHistorial,
@@ -105,19 +104,23 @@ class Historiales {
 
   /**
    * Obtiene todas las Historials de un cliente.
-   * @param {string} idCliente - ID del cliente.
-   * @return {Promise<Object[]>} Lista de Historials.  
+   * @param {string} idUsuario - ID del cliente.
+   * @return {Promise<Object[]>} Lista de Historials.
    */
-  static async getByUserId(idUsuario){
-    const snapshot = await db.collection(HISTORIAL_COLLECTION).where("idCliente", "==", idUsuario).get();
+  static async getByUserId(idUsuario) {
+    const snapshot = await db.collection(HISTORIAL_COLLECTION).where(
+        "idCliente",
+        "==",
+        idUsuario,
+    ).get();
     if (snapshot.empty) {
       return [];
     }
 
     return snapshot.docs.map((doc) => ({id: doc.id, ...doc
-    .data()}
+        .data()}
     ));
   }
 }
 
-module.exports = Historiales;
+module.exports = Historial;

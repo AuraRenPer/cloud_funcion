@@ -144,25 +144,24 @@ exports.eliminarCita = async (req, res) => {
   }
 };
 
-  // Obtener citas por ID de usuario
-  exports.obtenerCitasPorUsuario = async (req, res) => {
-    try {
-      const { idUsuario } = req.params;
+// Obtener citas por ID de usuario
+exports.obtenerCitasPorUsuario = async (req, res) => {
+  try {
+    const {idUsuario} = req.params;
 
-      if (!idUsuario) {
-        return res.status(400).json({
-          error: "ID de usuario es obligatorio",
-        });
-      }
-
-      const citas = await Citas.getByUserId(idUsuario);
-
-      res.status(200).json(citas);
-
-    } catch (error) {
-      res.status(500).json({
-        error: "Error al obtener las citas",
-        detalle: error.message
+    if (!idUsuario) {
+      return res.status(400).json({
+        error: "ID de usuario es obligatorio",
       });
     }
-  };
+
+    const citas = await Citas.getByUserId(idUsuario);
+
+    res.status(200).json(citas);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener las citas",
+      detalle: error.message,
+    });
+  }
+};

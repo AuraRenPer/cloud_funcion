@@ -109,16 +109,20 @@ class Citas {
   /**
    * Obtiene todas las citas de un cliente.
    * @param {string} idCliente - ID del cliente.
-   * @return {Promise<Object[]>} Lista de citas.  
+   * @return {Promise<Object[]>} Lista de citas.
    */
-  static async getByUserId(idUsuario){
-    const snapshot = await db.collection(CITAS_COLLECTION).where("idCliente", "==", idUsuario).get();
+  static async getByUserId(idCliente) {
+    const snapshot = await db.collection(CITAS_COLLECTION).where(
+        "idCliente",
+        "==",
+        idCliente,
+    ).get();
     if (snapshot.empty) {
       return [];
     }
 
     return snapshot.docs.map((doc) => ({id: doc.id, ...doc
-    .data()}
+        .data()}
     ));
   }
 }

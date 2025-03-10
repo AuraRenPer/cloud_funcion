@@ -25,18 +25,18 @@ exports.crearHistorial = async (req, res) => {
       });
     }
     const nuevoHistorial = new Historiales(
-      idUsuario,
-      idProveedor,
-      idServicio,
-      fechaHistorial,
-      horaHistorial,
+        idUsuario,
+        idProveedor,
+        idServicio,
+        fechaHistorial,
+        horaHistorial,
     );
 
     const historialId = await nuevoHistorial.save();
 
 
     res.status(201).json({
-      id: historialId.id,
+      id: historialId,
       mensaje: "Historial creada exitosamente",
     });
   } catch (error) {
@@ -72,11 +72,11 @@ exports.obtenerHistorial = async (req, res) => {
 // Obtener una historial por ID
 exports.obtenerHistorialPorId = async (req, res) => {
   try {
-    const { id } = req.params;
+    const {id} = req.params;
     const historial = await Historiales.getById(id);
 
     if (!historial.exists) {
-      return res.status(404).json({ error: "Historial no encontrada" });
+      return res.status(404).json({error: "Historial no encontrada"});
     }
 
     res.status(200).json({
@@ -94,12 +94,12 @@ exports.obtenerHistorialPorId = async (req, res) => {
 // Actualizar una historiales
 exports.actualizarHistorial = async (req, res) => {
   try {
-    const { id } = req.params;
+    const {id} = req.params;
     const datosActualizados = req.body;
 
     if (!id || Object.keys(datosActualizados).length === 0) {
       return res.status(400).json({
-        error: "ID de la historiales y otro dato obligatorio",
+        error: "ID de la historiales y al menos obligatorio",
       });
     }
 
@@ -120,7 +120,7 @@ exports.actualizarHistorial = async (req, res) => {
 // Eliminar una historial
 exports.eliminarHistorial = async (req, res) => {
   try {
-    const { id } = req.params;
+    const {id} = req.params;
 
     if (!id) {
       return res.status(400).json({
@@ -139,27 +139,26 @@ exports.eliminarHistorial = async (req, res) => {
       detalle: error.message,
     });
   }
-}
+};
 
-  // Obtener historiales por ID de usuario
-  exports.obtenerHistorialPorUsuario = async (req, res) => {
-    try {
-      const { idUsuario } = req.params;
+// Obtener historiales por ID de usuario
+exports.obtenerHistorialPorUsuario = async (req, res) => {
+  try {
+    const {idUsuario} = req.params;
 
-      if (!idUsuario) {
-        return res.status(400).json({
-          error: "ID de usuario es obligatorio",
-        });
-      }
-
-      const historiales = await Historiales.getByUserId(idUsuario);
-
-      res.status(200).json(historiales);
-
-    } catch (error) {
-      res.status(500).json({
-        error: "Error al obtener las historiales",
-        detalle: error.message
+    if (!idUsuario) {
+      return res.status(400).json({
+        error: "ID de usuario es obligatorio",
       });
     }
+
+    const historiales = await Historiales.getByUserId(idUsuario);
+
+    res.status(200).json(historiales);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener las historiales",
+      detalle: error.message,
+    });
   }
+};
