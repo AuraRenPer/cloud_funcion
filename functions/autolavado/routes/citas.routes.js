@@ -1,4 +1,6 @@
 const express = require("express");
+// eslint-disable-next-line new-cap
+const router = express.Router();
 const {verificarToken} = require("../middlewares/authMiddleware");
 const {
   crearCita,
@@ -8,8 +10,6 @@ const {
   eliminarCita,
 } = require("../controllers/citas");
 
-// eslint-disable-next-line new-cap
-const router = express.Router();
 
 router.post("/", verificarToken, crearCita);
 router.get("/", verificarToken, obtenerCitas);

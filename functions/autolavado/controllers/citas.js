@@ -10,6 +10,7 @@ exports.crearCita = async (req, res) => {
       idVehiculo,
       fechaCita,
       horaCita,
+      estatus,
     } = req.body;
 
     if (
@@ -18,25 +19,27 @@ exports.crearCita = async (req, res) => {
         !idServicio ||
         !idVehiculo ||
         !fechaCita ||
-        !horaCita
+        !horaCita ||
+        !estatus
     ) {
       return res.status(400).json({
         error: "Todos los campos son obligatorios",
       });
     }
-    const nuevaCita = await Citas.add({
-      idUsuario,
-      idProveedor,
-      idServicio,
-      idVehiculo,
-      fechaCita,
-      horaCita,
-      estatus: "pendiente",
-      fechaCreacion: new Date().toISOString(),
-    });
+    const nuevaCita = new Citas(
+        idUsuario,
+        idProveedor,
+        idServicio,
+        idVehiculo,
+        fechaCita,
+        horaCita,
+    );
+
+    const citaId = await nuevaCita.save();
+
 
     res.status(201).json({
-      id: nuevaCita.id,
+      id: citaId.id,
       mensaje: "Cita creada exitosamente",
     });
   } catch (error) {
@@ -50,11 +53,14 @@ exports.crearCita = async (req, res) => {
 // Obtener todas las citas
 exports.obtenerCitas = async (req, res) => {
   try {
-    const snapshot = await Citas.get();
-    const citas = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const citas = await Citas.getAll();
+
+    if (!citas || citas.length === 0) {
+      return res.status(200).json({
+        mensaje: "No hay citas registradas",
+        citas: [],
+      });
+    }
 
     res.status(200).json(citas);
   } catch (error) {
@@ -65,11 +71,12 @@ exports.obtenerCitas = async (req, res) => {
   }
 };
 
+
 // Obtener una cita por ID
 exports.obtenerCitaPorId = async (req, res) => {
   try {
     const {id} = req.params;
-    const cita = await Citas.doc(id).get();
+    const cita = await Citas.getById(id);
 
     if (!cita.exists) {
       return res.status(404).json({error: "Cita no encontrada"});
@@ -93,7 +100,13 @@ exports.actualizarCita = async (req, res) => {
     const {id} = req.params;
     const datosActualizados = req.body;
 
-    await Citas.doc(id).update(datosActualizados);
+    if (!id || Object.keys(datosActualizados).length === 0) {
+      return res.status(400).json({
+        error: "ID de la cita y otro dato obligatorio",
+      });
+    }
+
+    await Citas.updateById(id, datosActualizados);
 
     res.status(200).json({
       mensaje: "Cita actualizada correctamente",
@@ -106,12 +119,19 @@ exports.actualizarCita = async (req, res) => {
   }
 };
 
+
 // Eliminar una cita
 exports.eliminarCita = async (req, res) => {
   try {
     const {id} = req.params;
 
-    await Citas.doc(id).delete();
+    if (!id) {
+      return res.status(400).json({
+        error: "El ID de la cita es obligatorio",
+      });
+    }
+
+    await Citas.deleteById(id);
 
     res.status(200).json({
       mensaje: "Cita eliminada correctamente",
