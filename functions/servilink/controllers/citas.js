@@ -3,6 +3,8 @@ const Citas = require("../models/citas");
 // Crear una nueva cita
 exports.crearCita = async (req, res) => {
   try {
+    console.log("Datos recibidos en el backend:", req.body);
+
     const {
       idUsuario,
       idProveedor,
@@ -12,40 +14,51 @@ exports.crearCita = async (req, res) => {
       estatus,
     } = req.body;
 
+    // Verificación de campos obligatorios
     if (
       !idUsuario ||
-        !idProveedor ||
-        !idServicio ||
-        !fechaCita ||
-        !horaCita ||
-        !estatus
+      !idProveedor ||
+      !idServicio ||
+      !fechaCita ||
+      !horaCita ||
+      !estatus
     ) {
       return res.status(400).json({
         error: "Todos los campos son obligatorios",
       });
     }
+
+    console.log("Intentando guardar cita en Firestore...");
+
+    // Crear nueva instancia de Citas
     const nuevaCita = new Citas(
         idUsuario,
         idProveedor,
         idServicio,
         fechaCita,
         horaCita,
+        estatus,
     );
 
+    // Guardar la cita en Firestore
     const citaId = await nuevaCita.save();
 
+    console.log("Cita guardada con éxito, ID:", citaId);
 
     res.status(201).json({
-      id: citaId.id,
+      id: citaId, // Se devuelve el ID generado por Firestore
       mensaje: "Cita creada exitosamente",
     });
   } catch (error) {
+    console.error("Error al crear la cita:", error);
+
     res.status(500).json({
       error: "Error al crear la cita",
       detalle: error.message,
     });
   }
 };
+
 
 // Obtener todas las citas
 exports.obtenerCitas = async (req, res) => {
