@@ -1,14 +1,14 @@
 const admin = require("firebase-admin");
 const db = admin.firestore();
 
-const HISTORIAL_COLLECTION = "historial";
+const HISTORIAL_COLLECTION = "historial_servilink";
 
 /**
  * Clase para representar una Historial. (Autolavado)
  */
 class Historial {
   /**
-  * Constructor de la clase historial.
+  * Constructor de la clase Historials.
   * @param {string} idCliente - ID del cliente.
   * @param {string} idProveedor - ID del proveedor.
   * @param {string} idServicio - ID del servicio.
@@ -53,8 +53,8 @@ class Historial {
   }
 
   /**
-   * Obtiene todas las historial de la colección.
-   * @return {Promise<Object[]>} Lista de historial.
+   * Obtiene todas las Historials de la colección.
+   * @return {Promise<Object[]>} Lista de Historials.
    */
   static async getAll() {
     const snapshot = await db.collection(HISTORIAL_COLLECTION).get();
@@ -102,9 +102,9 @@ class Historial {
   }
 
   /**
-   * Obtiene todas las historial de un cliente.
+   * Obtiene todas las Historials de un cliente.
    * @param {string} idUsuario - ID del cliente.
-   * @return {Promise<Object[]>} Lista de historial.
+   * @return {Promise<Object[]>} Lista de Historials.
    */
   static async getByUserId(idUsuario) {
     const snapshot = await db.collection(HISTORIAL_COLLECTION).where(
