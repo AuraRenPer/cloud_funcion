@@ -25,9 +25,9 @@ app.use("/api/proveedores", proveedoresRoutes);
 app.use("/api/citas", citasRoutes);
 app.use("/api/vehiculos", vehiculosRoutes);
 
-app.use("/api/usuarios", usuariosRoutesServilink);
-app.use("/api/servicios", serviciosRoutesServilink);
-app.use("/api/proveedores", proveedoresRoutesServilink);
-app.use("/api/citas", citasRoutesServilink);
+app.use("/api/usuarios_servilink", usuariosRoutesServilink);
+app.use("/api/servicios_servilink", serviciosRoutesServilink);
+app.use("/api/proveedores_servilink", proveedoresRoutesServilink);
+app.use("/api/citas_servilink", citasRoutesServilink);
 
 exports.api = functions.https.onRequest(app);
