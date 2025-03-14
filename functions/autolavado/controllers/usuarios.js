@@ -1,3 +1,4 @@
+const admin = require("firebase-admin");
 const Usuario = require("../models/usuario");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -61,6 +62,7 @@ exports.crearUsuario = async (req, res) => {
     res.status(201).json({
       id: usuarioId,
       mensaje: "Usuario registrado exitosamente",
+      uid,
     });
   } catch (error) {
     res.status(500).json({
