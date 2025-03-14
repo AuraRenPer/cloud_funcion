@@ -119,3 +119,24 @@ exports.eliminarProveedor = async (req, res) => {
     });
   }
 };
+
+exports.obtenerProveedoresConServicios = async (req, res) => {
+  try {
+    const proveedores = await Proveedor.getAll();
+
+    const filtrados = proveedores.filter((p) => {
+      return (
+        p.serviciosDisponibles &&
+        p.serviciosDisponibles.length > 0
+      );
+    });
+
+    res.status(200).json(filtrados);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener proveedores con servicios",
+      detalle: error.message,
+    });
+  }
+};
+

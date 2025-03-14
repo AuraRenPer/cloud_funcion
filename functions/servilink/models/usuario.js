@@ -155,43 +155,42 @@ class Usuario {
    * @param {string} correo - Correo o username del usuario.
    * @return {Promise<Object>} Datos del usuario.
    */
-static async getByCorreo(correo) {
-  console.log("Buscando usuario con correo:", correo);
-  const snapshot = await db.collection(USUARIOS_COLLECTION)
-    .where("correo", "==", correo)
-    .limit(1)
-    .get();
+  static async getByCorreo(correo) {
+    console.log("Buscando usuario con correo:", correo);
+    const snapshot = await db.collection(USUARIOS_COLLECTION)
+        .where("correo", "==", correo)
+        .limit(1)
+        .get();
 
-  console.log("Snapshot correo empty?", snapshot.empty);
-  if (!snapshot.empty) {
-    const doc = snapshot.docs[0];
-    console.log("Usuario con correo encontrado:", doc.data());
-    return { id: doc.id, ...doc.data() };
+    console.log("Snapshot correo empty?", snapshot.empty);
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      console.log("Usuario con correo encontrado:", doc.data());
+      return {id: doc.id, ...doc.data()};
+    }
+
+    return null;
   }
-
-  return null;
-}
   /**
    * Obtener usuario por correo o username.
    * @param {string} username - Correo o username del usuario.
    * @return {Promise<Object>} Datos del usuario.
    */
-static async getByUsername(username) {
-  console.log("Buscando usuario con username:", username);
-  const snapshot = await db.collection(USUARIOS_COLLECTION)
-    .where("username", "==", username)
-    .limit(1)
-    .get();
+  static async getByUsername(username) {
+    console.log("Buscando usuario con username:", username);
+    const snapshot = await db.collection(USUARIOS_COLLECTION)
+        .where("username", "==", username)
+        .limit(1)
+        .get();
 
-  console.log("Snapshot username empty?", snapshot.empty);
-  if (!snapshot.empty) {
-    const doc = snapshot.docs[0];
-    console.log("Usuario con username encontrado:", doc.data());
-    return { id: doc.id, ...doc.data() };
+    console.log("Snapshot username empty?", snapshot.empty);
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      console.log("Usuario con username encontrado:", doc.data());
+      return {id: doc.id, ...doc.data()};
+    }
+
+    return null;
   }
-
-  return null;
-}
-
 }
 module.exports = Usuario;
