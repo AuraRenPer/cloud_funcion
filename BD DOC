@@ -1,0 +1,59 @@
+Usuarios (usuarios)
+    id_usuario (PK, UUID)
+    nombre
+    correo (único)
+    contraseña
+    teléfono (Ahora se agregará al login)
+    rol (Cliente, Proveedor, Administrador)
+    permisos
+    fecha_login (Registro de última conexión del usuario)
+Proveedores (proveedores_servilink)
+    id_proveedor (PK, UUID)
+    nombre_empresa
+    correo (único)
+    teléfono
+    ubicación
+    horario_servicio
+    servicios_disponibles (Array de IDs de servicios)
+    estado (Activo/Inactivo)
+    id_usuario (FK → usuarios) (Para vincular al usuario registrado como proveedor.)
+Servicios (servicios)
+    id_servicio (PK, UUID)
+    nombre
+    descripción_problema
+    precio
+    duración
+    imagen
+    tipo_servicio (Lavado, Mantenimiento, Reparación)
+    id_proveedor (FK → proveedores_servilink)
+    ubicación_persona (Si el servicio es a domicilio.)
+Citas (citas)
+    id_cita (PK, UUID)
+    id_usuario (FK → usuarios)
+    id_proveedor (FK → proveedores_servilink)
+    id_servicio (FK → servicios)
+    id_vehiculo (FK → vehiculos, opcional)
+    fecha_cita
+    hora_cita
+    estado (Pendiente, Confirmada, Cancelada, Completada.)
+Historial (historial)
+    id_historial (PK, UUID)
+    id_cita (FK → citas)
+    id_usuario (FK → usuarios)
+    id_proveedor (FK → proveedores_servilink)
+    id_servicio (FK → servicios) (Aquí se guardará toda la información del servicio en el momento de la cita.)
+    fecha_realización
+Solicitudes de Servicio (solicitudes_servicio)
+    id_solicitud (PK, UUID)
+    id_usuario (FK → usuarios) (Cliente que solicita el servicio.)
+    id_proveedor (FK → proveedores_servilink)
+    id_servicio (FK → servicios)
+    id_vehiculo (FK → vehiculos, opcional)
+    fecha_solicitud
+    estado (Pendiente, Aceptada, Rechazada, En proceso.)
+
+
+
+
+
+
