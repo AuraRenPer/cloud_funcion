@@ -3,13 +3,14 @@
 #### Comando para subir a a firebase deploy 
 ```bash
 
-firebase --only functions deploy
+firebase deploy --only functions
 
 
   ```
 
 ### Comandos para formato 
 ```bash
+npx eslint . --fix 
 
-npx 
   ```
+Este comando si da error en el formato a la hora de hacer deploy
