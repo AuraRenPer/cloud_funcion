@@ -1,6 +1,7 @@
 Usuarios (usuarios)
     id_usuario (PK, UUID)
     nombre
+		username
     correo (único)
     contraseña
     teléfono (Ahora se agregará al login)
