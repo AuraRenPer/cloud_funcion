@@ -12,7 +12,7 @@ const {
 } = require("../controllers/usuarios");
 
 
-router.post("/", verificarToken, crearUsuario);
+router.post("/", crearUsuario);
 router.get("/", verificarToken, obtenerUsuarios);
 router.get("/:id", verificarToken, obtenerUsuarioPorId);
 router.put("/:id", verificarToken, actualizarUsuario);

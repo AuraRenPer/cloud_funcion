@@ -8,36 +8,51 @@ exports.crearUsuario = async (req, res) => {
       apellido,
       correo,
       password,
+      username,
       telefono,
-      fechaRegistro,
+      fechaLogin,
       rol,
       estatus,
     } = req.body;
 
-    if (
-      !nombre ||
-      !apellido ||
-      !correo ||
-      !password ||
-      !telefono ||
-      !fechaRegistro ||
-      !rol ||
-      !estatus) {
+    const camposFaltantes = [];
+    if (!nombre) camposFaltantes.push("nombre");
+    if (!apellido) camposFaltantes.push("apellido");
+    if (!correo) camposFaltantes.push("correo");
+    if (!password) camposFaltantes.push("password");
+    if (!username) camposFaltantes.push("username");
+    if (!telefono) camposFaltantes.push("telefono");
+    if (!fechaLogin) camposFaltantes.push("fechaLogin");
+    if (!rol) camposFaltantes.push("rol");
+    if (!estatus) camposFaltantes.push("estatus");
+
+    if (camposFaltantes.length > 0) {
       return res.status(400).json({
-        error: "Todos los campos son obligatorios",
+        error:
+        `Los siguientes campos son obligatorios:
+         ${camposFaltantes.join(", ")}`,
       });
     }
+
+    console.log("Contraseña recibida en API:", password);
 
     const nuevoUsuario = new Usuario(
         nombre,
         apellido,
         correo,
         password,
+        username,
         telefono,
-        fechaRegistro,
+        fechaLogin,
         rol,
         estatus,
     );
+
+    console.log(
+        "Contraseña encriptada antes de guardar:",
+        nuevoUsuario.password,
+    );
+
     const usuarioId = await nuevoUsuario.save();
 
     res.status(201).json({
