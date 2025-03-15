@@ -90,3 +90,22 @@ exports.obtenerCitasPorProveedor = async (req, res) => {
     });
   }
 };
+
+
+exports.obtenerFechasOcupadas = async (req, res) => {
+  try {
+    const citas = await Citas.getAll();
+    const fechasOcupadas = citas.map((cita) => ({
+      fecha: cita.fechaCita,
+      hora: cita.horaCita,
+    }));
+
+    res.status(200).json(fechasOcupadas);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener las fechas ocupadas",
+      detalle: error.message,
+    });
+  }
+};
+

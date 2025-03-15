@@ -1,6 +1,12 @@
 const functions = require("firebase-functions");
 const express = require("express");
 const cors = require("cors");
+const admin = require("firebase-admin");
+
+// 🔹 Verificar si Firebase ya está inicializado antes de inicializarlo
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
 
 const app = express();
 app.use(cors());
