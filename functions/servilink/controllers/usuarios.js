@@ -39,6 +39,18 @@ exports.crearUsuario = async (req, res) => {
 
     console.log("Contraseña recibida en API:", password);
 
+    // Verificar si el correo ya existe
+    const usuarioExistentePorCorreo = await Usuario.getByCorreoOrUsername(correo);
+    if (usuarioExistentePorCorreo) {
+      return res.status(400).json({ error: "El correo ya está registrado" });
+    }
+
+    // Verificar si el username ya existe
+    const usuarioExistentePorUsername = await Usuario.getByCorreoOrUsername(username);
+    if (usuarioExistentePorUsername) {
+      return res.status(400).json({ error: "El nombre de usuario ya está en uso" });
+    }
+
     const nuevoUsuario = new Usuario(
         nombre,
         apellido,
