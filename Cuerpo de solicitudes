@@ -1,0 +1,35 @@
+NOTA: Al subirlo a firebase, este ya cuenta con una URL la cual espero les aparezca: https://api-cog73kiucq-uc.a.run.app. Con esta colocas /api/**modulo**_servilink/**metodo a solicitar***
+
+Cuerpo de solicitudes: 
+
+USUARIOS:
+/api/usuarios_servilink/crearusuario
+
+Cuerpo de documento: 
+{
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "correo": "juan@example.com",
+  "password": "123456",
+  "username": "juanperez",
+  "telefono": "5551234567",
+  "fechaLogin": "2025-03-15T23:16:19.912Z",
+  "rol": "cliente",
+  "estatus": "activo"
+}
+
+PROVEEDORES: 
+/api/proveedores_servilink/crearproveedor
+
+Cuerpo de documento:
+{
+  "nombreEmpresa": "Lavado Express",
+  "correo": "contacto@lavadoexpress.com",
+  "telefono": "1234567890",
+  "ubicacion": "Calle 123, Ciudad, País",
+  "horarioServicio": "Lunes a Viernes 8:00 AM - 6:00 PM",
+  "serviciosDisponibles": ["servicio_1", "servicio_2"],
+  "estado": "activo",
+  "idUsuario": "wP3JZ4nAd5xVvTf8K2Lm"
+}
+
