@@ -1,4 +1,7 @@
 const Usuario = require("../models/usuario");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const SECRET_KEY = "m1_c14v3_53cr374_muy_larg4_y_d1f1c1l_d3_ad1v1nar";
 
 // Crear un nuevo usuario
 exports.crearUsuario = async (req, res) => {
@@ -122,6 +125,62 @@ exports.eliminarUsuario = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error: "Error al eliminar el usuario",
+      detalle: error.message,
+    });
+  }
+};
+
+exports.loginUsuario = async (req, res) => {
+  try {
+    const {
+      login,
+      password,
+    } = req.body; // login es correo o username
+
+    console.log("Intento de login con:", login);
+
+    const snapshot = await Usuario.getByCorreoOrUsername(login);
+
+    if (!snapshot) {
+      return res.status(400).json({error: "Usuario no encontrado"});
+    }
+
+    const usuarioData = snapshot;
+
+    console.log("Usuario encontrado:", usuarioData);
+
+    const passwordValida = bcrypt.compareSync(password, usuarioData.password);
+
+    if (!passwordValida) {
+      return res.status(401).json({error: "Contraseña incorrecta"});
+    }
+
+    const token = jwt.sign(
+        {id: usuarioData.id,
+          correo: usuarioData.correo,
+          username: usuarioData.username,
+          rol: usuarioData.rol},
+        SECRET_KEY,
+        {expiresIn: "7d"},
+    );
+
+    res.status(200).json({
+      mensaje: "Inicio de sesión exitoso",
+      token,
+      usuario: {
+        id: usuarioData.id,
+        nombre: usuarioData.nombre,
+        apellido: usuarioData.apellido,
+        correo: usuarioData.correo,
+        username: usuarioData.username,
+        rol: usuarioData.rol,
+        estatus: usuarioData.estatus,
+      },
+    });
+  } catch (error) {
+    console.error("Error en login:", error);
+    res.status(500).json({
+      error: "Error en el inicio de sesión",
       detalle: error.message,
     });
   }

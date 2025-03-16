@@ -115,6 +115,40 @@ class Usuario {
     await db.collection(USUARIOS_COLLECTION).doc(id).delete();
     return {id, mensaje: "Usuario eliminado correctamente"};
   }
+
+
+  /**
+   * Obtener usuario por correo o username.
+   * @param {string} login - Correo o username del usuario.
+   * @return {Promise<Object>} Datos del usuario.
+   */
+  static async getByCorreoOrUsername(login) {
+    let snapshot;
+
+    // Intentamos buscar por correo
+    snapshot = await db.collection(USUARIOS_COLLECTION)
+        .where("correo", "==", login)
+        .limit(1)
+        .get();
+
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      return {id: doc.id, ...doc.data()};
+    }
+
+    // Si no encontramos por correo, buscamos por username
+    snapshot = await db.collection(USUARIOS_COLLECTION)
+        .where("username", "==", login)
+        .limit(1)
+        .get();
+
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      return {id: doc.id, ...doc.data()};
+    }
+
+    return null;
+  }
 }
 
 module.exports = Usuario;
