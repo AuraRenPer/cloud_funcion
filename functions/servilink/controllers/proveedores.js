@@ -4,42 +4,49 @@ const Proveedor = require("../models/proveedor");
 exports.crearProveedor = async (req, res) => {
   try {
     const {
-      nombreAutolavado,
+      nombreEmpresa,
       correo,
       telefono,
-      ubicacionId,
-      estatus,
-      horarioAtencion,
-      capacidadMaxima,
+      ubicacion,
+      horarioServicio,
+      serviciosDisponibles,
+      estado,
+      idUsuario,
     } = req.body;
 
-    if (
-      !nombreAutolavado ||
-      !correo ||
-      !telefono ||
-      !ubicacionId ||
-      !estatus ||
-      !horarioAtencion ||
-      !capacidadMaxima
-    ) {
+    // Verificar campos requeridos
+    const camposFaltantes = [];
+    if (!nombreEmpresa) camposFaltantes.push("nombreEmpresa");
+    if (!correo) camposFaltantes.push("correo");
+    if (!telefono) camposFaltantes.push("telefono");
+    if (!ubicacion) camposFaltantes.push("ubicacion");
+    if (!horarioServicio) camposFaltantes.push("horarioServicio");
+    if (!estado) camposFaltantes.push("estado");
+    if (!idUsuario) camposFaltantes.push("idUsuario");
+
+    if (camposFaltantes.length > 0) {
       return res.status(400).json({
-        error: "Todos los campos son obligatorios",
+        error:
+        `Los siguientes campos son obligatorios: 
+        ${camposFaltantes.join(", ")}`,
       });
     }
 
     const nuevoProveedor = new Proveedor(
-        nombreAutolavado,
+        nombreEmpresa,
         correo,
         telefono,
-        ubicacionId,
-        estatus,
-        horarioAtencion,
-        capacidadMaxima,
+        ubicacion,
+        horarioServicio,
+        serviciosDisponibles,
+        estado,
+        idUsuario,
     );
+
     const proveedorId = await nuevoProveedor.save();
 
     res.status(201).json({
-      id: proveedorId,
+      idProveedor: proveedorId,
       mensaje: "Proveedor registrado exitosamente",
     });
   } catch (error) {
