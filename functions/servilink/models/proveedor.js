@@ -12,7 +12,12 @@ class Proveedor {
    * @param {string} nombreEmpresa - Nombre del proveedor.
    * @param {string} correo - Correo del proveedor.
    * @param {string} telefono - Teléfono del proveedor.
-   * @param {string} ubicacion - Dirección del proveedor.
+   * @param {Object} ubicacion
+   * - Ubicación del proveedor con latitud, longitud y dirección.
+   * @param {number} ubicacion.lat - Latitud geográfica.
+   * @param {number} ubicacion.lng - Longitud geográfica.
+   * @param {string} ubicacion.direccion
+   *  - Dirección completa del proveedor.
    * @param {string} horarioServicio - Horario de atención.
    * @param {Array<string>} serviciosDisponibles - Lista de IDs de servicios.
    * @param {string} estado - Estado del proveedor (activo/inactivo).
@@ -46,10 +51,8 @@ class Proveedor {
     const proveedorRef = db.collection(
         PROVEEDORES_COLLECTION,
     ).doc();
-    const idProveedor = proveedorRef.id;
 
     await proveedorRef.set({
-      idProveedor: idProveedor,
       nombreEmpresa: this.nombreEmpresa,
       correo: this.correo,
       telefono: this.telefono,
@@ -59,7 +62,7 @@ class Proveedor {
       estado: this.estado,
       idUsuario: this.idUsuario,
     });
-    return this.idProveedor;
+    return proveedorRef.id;
   }
 
   /**

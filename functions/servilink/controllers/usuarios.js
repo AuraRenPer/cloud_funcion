@@ -132,13 +132,17 @@ exports.eliminarUsuario = async (req, res) => {
 
 exports.loginUsuario = async (req, res) => {
   try {
-    const {
-      login,
-      password,
-    } = req.body; // login es correo o username
+    const {login, password} = req.body;
+    // 🔹 `login` puede ser un correo o username
 
-    console.log("Intento de login con:", login);
+    if (!login || !password) {
+      return res.status(400).json({
+        error:
+        "Correo/Usuario y contraseña son obligatorios.",
+      });
+    }
 
+    // 🔹 Buscar usuario por correo o username
     const snapshot = await Usuario.getByCorreoOrUsername(login);
 
     if (!snapshot) {
@@ -147,23 +151,28 @@ exports.loginUsuario = async (req, res) => {
 
     const usuarioData = snapshot;
 
-    console.log("Usuario encontrado:", usuarioData);
+    console.log("✅ Usuario encontrado:", usuarioData);
 
+    // 🔹 Validar la contraseña con bcrypt
     const passwordValida = bcrypt.compareSync(password, usuarioData.password);
 
     if (!passwordValida) {
       return res.status(401).json({error: "Contraseña incorrecta"});
     }
 
+    // 🔹 Generar token con los datos del usuario
     const token = jwt.sign(
-        {id: usuarioData.id,
+        {
+          id: usuarioData.id,
           correo: usuarioData.correo,
           username: usuarioData.username,
-          rol: usuarioData.rol},
+          rol: usuarioData.rol,
+        },
         SECRET_KEY,
         {expiresIn: "7d"},
     );
 
+    // 🔹 Respuesta con token y datos del usuario
     res.status(200).json({
       mensaje: "Inicio de sesión exitoso",
       token,
@@ -178,7 +187,7 @@ exports.loginUsuario = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error en login:", error);
+    console.error("❌ Error en login:", error);
     res.status(500).json({
       error: "Error en el inicio de sesión",
       detalle: error.message,
