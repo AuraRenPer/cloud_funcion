@@ -99,3 +99,4 @@ class Proveedor {
 }
 
 module.exports = Proveedor;
+
