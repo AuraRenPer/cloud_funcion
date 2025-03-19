@@ -1,4 +1,7 @@
 const Usuario = require("../models/usuario");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const SECRET_KEY = "m1_c14v3_53cr374_muy_larg4_y_d1f1c1l_d3_ad1v1nar";
 
 // Crear un nuevo usuario
 exports.crearUsuario = async (req, res) => {
@@ -8,36 +11,51 @@ exports.crearUsuario = async (req, res) => {
       apellido,
       correo,
       password,
+      username,
       telefono,
-      fechaRegistro,
+      fechaLogin,
       rol,
       estatus,
     } = req.body;
 
-    if (
-      !nombre ||
-      !apellido ||
-      !correo ||
-      !password ||
-      !telefono ||
-      !fechaRegistro ||
-      !rol ||
-      !estatus) {
+    const camposFaltantes = [];
+    if (!nombre) camposFaltantes.push("nombre");
+    if (!apellido) camposFaltantes.push("apellido");
+    if (!correo) camposFaltantes.push("correo");
+    if (!password) camposFaltantes.push("password");
+    if (!username) camposFaltantes.push("username");
+    if (!telefono) camposFaltantes.push("telefono");
+    if (!fechaLogin) camposFaltantes.push("fechaLogin");
+    if (!rol) camposFaltantes.push("rol");
+    if (!estatus) camposFaltantes.push("estatus");
+
+    if (camposFaltantes.length > 0) {
       return res.status(400).json({
-        error: "Todos los campos son obligatorios",
+        error:
+        `Los siguientes campos son obligatorios:
+         ${camposFaltantes.join(", ")}`,
       });
     }
+
+    console.log("Contraseña recibida en API:", password);
 
     const nuevoUsuario = new Usuario(
         nombre,
         apellido,
         correo,
         password,
+        username,
         telefono,
-        fechaRegistro,
+        fechaLogin,
         rol,
         estatus,
     );
+
+    console.log(
+        "Contraseña encriptada antes de guardar:",
+        nuevoUsuario.password,
+    );
+
     const usuarioId = await nuevoUsuario.save();
 
     res.status(201).json({
@@ -107,6 +125,71 @@ exports.eliminarUsuario = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error: "Error al eliminar el usuario",
+      detalle: error.message,
+    });
+  }
+};
+
+exports.loginUsuario = async (req, res) => {
+  try {
+    const {login, password} = req.body;
+    // 🔹 `login` puede ser un correo o username
+
+    if (!login || !password) {
+      return res.status(400).json({
+        error:
+        "Correo/Usuario y contraseña son obligatorios.",
+      });
+    }
+
+    // 🔹 Buscar usuario por correo o username
+    const snapshot = await Usuario.getByCorreoOrUsername(login);
+
+    if (!snapshot) {
+      return res.status(400).json({error: "Usuario no encontrado"});
+    }
+
+    const usuarioData = snapshot;
+
+    console.log("✅ Usuario encontrado:", usuarioData);
+
+    // 🔹 Validar la contraseña con bcrypt
+    const passwordValida = bcrypt.compareSync(password, usuarioData.password);
+
+    if (!passwordValida) {
+      return res.status(401).json({error: "Contraseña incorrecta"});
+    }
+
+    // 🔹 Generar token con los datos del usuario
+    const token = jwt.sign(
+        {
+          id: usuarioData.id,
+          correo: usuarioData.correo,
+          username: usuarioData.username,
+          rol: usuarioData.rol,
+        },
+        SECRET_KEY,
+        {expiresIn: "7d"},
+    );
+
+    // 🔹 Respuesta con token y datos del usuario
+    res.status(200).json({
+      mensaje: "Inicio de sesión exitoso",
+      token,
+      usuario: {
+        id: usuarioData.id,
+        nombre: usuarioData.nombre,
+        apellido: usuarioData.apellido,
+        correo: usuarioData.correo,
+        username: usuarioData.username,
+        rol: usuarioData.rol,
+        estatus: usuarioData.estatus,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error en login:", error);
+    res.status(500).json({
+      error: "Error en el inicio de sesión",
       detalle: error.message,
     });
   }
