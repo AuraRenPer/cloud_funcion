@@ -22,7 +22,9 @@ class Proveedor {
    * @param {Array<string>} serviciosDisponibles - Lista de IDs de servicios.
    * @param {string} estado - Estado del proveedor (activo/inactivo).
    * @param {string} idUsuario - ID del usuario vinculado.
-   */
+   * @param {string} idCategoria
+   * - ID de la categoría a la que pertenece el proveedor.
+  */
   constructor(
       nombreEmpresa,
       correo,
@@ -32,6 +34,7 @@ class Proveedor {
       serviciosDisponibles,
       estado,
       idUsuario,
+      idCategoria,
   ) {
     this.nombreEmpresa = nombreEmpresa;
     this.correo = correo;
@@ -41,6 +44,7 @@ class Proveedor {
     this.serviciosDisponibles = serviciosDisponibles || [];
     this.estado = estado;
     this.idUsuario = idUsuario;
+    this.idCategoria = idCategoria;
   }
 
   /**
@@ -61,6 +65,7 @@ class Proveedor {
       serviciosDisponibles: this.serviciosDisponibles,
       estado: this.estado,
       idUsuario: this.idUsuario,
+      idCategoria: this.idCategoria,
     });
     return proveedorRef.id;
   }
@@ -85,6 +90,18 @@ class Proveedor {
       throw new Error("Proveedor no encontrado");
     }
     return {id: doc.id, ...doc.data()};
+  }
+
+  /**
+   * Obtiene proveedores por categoría.
+   * @param {string} idCategoria - ID de la categoría.
+   * @return {Promise<Object[]>} Lista de proveedores en esa categoría.
+   */
+  static async getByCategoria(idCategoria) {
+    const snapshot = await db.collection(PROVEEDORES_COLLECTION)
+        .where("idCategoria", "==", idCategoria)
+        .get();
+    return snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
   }
 
   /**

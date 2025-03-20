@@ -19,6 +19,7 @@ const proveedoresRoutesServilink = require(
 );
 const citasRoutesServilink = require("./servilink/routes/citas.routes");
 const historialRoutes = require("./servilink/routes/historial.routes");
+const categoriasRoutes = require("./servilink/routes/categorias.routes");
 
 
 app.use("/api/usuarios", usuariosRoutes);
@@ -32,5 +33,8 @@ app.use("/api/servicios_servilink", serviciosRoutesServilink);
 app.use("/api/proveedores_servilink", proveedoresRoutesServilink);
 app.use("/api/citas_servilink", citasRoutesServilink);
 app.use("/api/historial_servilink", historialRoutes);
+app.use("/api/categorias_servilink", categoriasRoutes);
 
 exports.api = functions.https.onRequest(app);
+
+
