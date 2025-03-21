@@ -7,34 +7,41 @@ exports.crearProveedor = async (req, res) => {
       nombreAutolavado,
       correo,
       telefono,
-      ubicacionId,
-      estatus,
-      horarioAtencion,
+      ubicacion,
+      horarioServicio,
+      serviciosDisponibles,
+      estado,
       capacidadMaxima,
+      idUsuario,
     } = req.body;
 
-    if (
-      !nombreAutolavado ||
-      !correo ||
-      !telefono ||
-      !ubicacionId ||
-      !estatus ||
-      !horarioAtencion ||
-      !capacidadMaxima
-    ) {
+    const camposFaltantes = [];
+    if (!nombreAutolavado) camposFaltantes.push("nombreEmpresa");
+    if (!correo) camposFaltantes.push("correo");
+    if (!telefono) camposFaltantes.push("telefono");
+    if (!ubicacion) camposFaltantes.push("ubicacion");
+    if (!horarioServicio) camposFaltantes.push("horarioServicio");
+    if (!estado) camposFaltantes.push("estado");
+    if (!capacidadMaxima) camposFaltantes.push("capacidadMaxima");
+    if (!idUsuario) camposFaltantes.push("idUsuario");
+
+    if (camposFaltantes.length > 0) {
       return res.status(400).json({
-        error: "Todos los campos son obligatorios",
+        error:
+        `Los siguientes campos son obligatorios: 
+        ${camposFaltantes.join(", ")}`,
       });
     }
-
     const nuevoProveedor = new Proveedor(
         nombreAutolavado,
         correo,
         telefono,
-        ubicacionId,
-        estatus,
-        horarioAtencion,
+        ubicacion,
+        horarioServicio,
+        serviciosDisponibles,
+        estado,
         capacidadMaxima,
+        idUsuario,
     );
     const proveedorId = await nuevoProveedor.save();
 
@@ -49,6 +56,20 @@ exports.crearProveedor = async (req, res) => {
     });
   }
 };
+
+// Obtener todos los proveedores
+exports.obtenerProveedores = async (req, res) => {
+  try {
+    const proveedores = await Proveedor.getAll();
+    res.status(200).json(proveedores);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener los proveedores",
+      detalle: error.message,
+    });
+  }
+};
+
 
 // Obtener todos los proveedores
 exports.obtenerProveedores = async (req, res) => {

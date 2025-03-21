@@ -4,45 +4,67 @@ const db = admin.firestore();
 const SERVICIOS_COLLECTION = "servicios";
 
 /**
- * Clase para representar un Servicio de autolavado.
+ * Clase para representar un Servicio.
  */
 class Servicio {
   /**
    * Constructor de la clase Servicio.
-   * @param {string} nombreServicio - Nombre del servicio.
-   * @param {string} descripcion - Descripción del servicio.
+   * @param {string} nombre - Nombre del servicio.
+   * @param {string} descripcionProblema - Descripción del problema.
    * @param {number} precio - Precio del servicio.
-   * @param {string} duracionEstimada - Duración estimada del servicio.
-   * @param {string} idProveedor - ID del proveedor que ofrece el servicio.
+   * @param {string} duracion - Duración estimada del servicio.
+   * @param {string} imagen - URL de la imagen del servicio.
+   * @param {string} tipoServicio
+   * - Tipo de servicio (Lavado Express, Lavado Premium).
+   * @param {string} idProveedor
+   * - ID del proveedor que ofrece el servicio.
+   * @param {Object|null} ubicacionPersona
+   *  - Ubicación de la persona si el servicio es a domicilio.
+   * @param {number} ubicacionPersona.lat - Latitud geográfica (opcional).
+   * @param {number} ubicacionPersona.lng - Longitud geográfica (opcional).
+   * @param {string} ubicacionPersona.direccion - Dirección completa (opcional).
    */
   constructor(
-      nombreServicio,
-      descripcion,
+      nombre,
+      descripcionProblema,
       precio,
-      duracionEstimada,
+      duracion,
+      imagen,
+      tipoServicio,
       idProveedor,
+      ubicacionPersona = null,
   ) {
-    this.nombreServicio = nombreServicio;
-    this.descripcion = descripcion;
+    this.nombre = nombre;
+    this.descripcionProblema = descripcionProblema;
     this.precio = precio;
-    this.duracionEstimada = duracionEstimada;
+    this.duracion = duracion;
+    this.imagen = imagen;
+    this.tipoServicio = tipoServicio;
     this.idProveedor = idProveedor;
+    this.ubicacionPersona = ubicacionPersona;
   }
 
   /**
-   * Guarda un nuevo servicio en Firestore.
+   * Guarda un nuevo servicio
    * @return {Promise<string>} ID del servicio guardado.
    */
   async save() {
     const servicioRef = db.collection(SERVICIOS_COLLECTION).doc();
+    const idServicio = servicioRef.id;
+
     await servicioRef.set({
-      nombreServicio: this.nombreServicio,
-      descripcion: this.descripcion,
+      idServicio: idServicio, // 🔹 Guardamos el ID en Firestore
+      nombre: this.nombre,
+      descripcionProblema: this.descripcionProblema,
       precio: this.precio,
-      duracionEstimada: this.duracionEstimada,
+      duracion: this.duracion,
+      imagen: this.imagen,
+      tipoServicio: this.tipoServicio,
       idProveedor: this.idProveedor,
+      ubicacionPersona: this.ubicacionPersona,
     });
-    return servicioRef.id;
+
+    return idServicio;
   }
 
   /**
@@ -58,7 +80,6 @@ class Servicio {
    * Obtiene un servicio por su ID.
    * @param {string} id - ID del servicio.
    * @return {Promise<Object>} Datos del servicio.
-   * @throws {Error} Si el servicio no se encuentra.
    */
   static async getById(id) {
     const doc = await db.collection(SERVICIOS_COLLECTION).doc(id).get();
@@ -69,13 +90,37 @@ class Servicio {
   }
 
   /**
+   * Obtiene todos los servicios de un proveedor.
+   * @param {string} idProveedor - ID del proveedor.
+   * @return {Promise<Object[]>} Lista de servicios del proveedor.
+   */
+  static async getByProveedor(idProveedor) {
+    const snapshot = await db.collection(SERVICIOS_COLLECTION)
+        .where("idProveedor", "==", idProveedor)
+        .get();
+
+    if (snapshot.empty) {
+      throw new Error("No hay servicios disponibles para este proveedor.");
+    }
+
+    return snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
+  }
+
+  /**
    * Actualiza un servicio por su ID.
    * @param {string} id - ID del servicio.
    * @param {Object} data - Datos a actualizar.
    * @return {Promise<Object>} Datos actualizados del servicio.
    */
   static async updateById(id, data) {
-    await db.collection(SERVICIOS_COLLECTION).doc(id).update(data);
+    const servicioRef = db.collection(SERVICIOS_COLLECTION).doc(id);
+    const doc = await servicioRef.get();
+
+    if (!doc.exists) {
+      throw new Error("Servicio no encontrado");
+    }
+
+    await servicioRef.update(data);
     return {id, ...data};
   }
 
@@ -85,7 +130,14 @@ class Servicio {
    * @return {Promise<Object>} Mensaje de eliminación.
    */
   static async deleteById(id) {
-    await db.collection(SERVICIOS_COLLECTION).doc(id).delete();
+    const servicioRef = db.collection(SERVICIOS_COLLECTION).doc(id);
+    const doc = await servicioRef.get();
+
+    if (!doc.exists) {
+      throw new Error("Servicio no encontrado");
+    }
+
+    await servicioRef.delete();
     return {id, mensaje: "Servicio eliminado correctamente"};
   }
 }
