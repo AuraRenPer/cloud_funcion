@@ -12,6 +12,7 @@ exports.crearProveedor = async (req, res) => {
       serviciosDisponibles,
       estado,
       idUsuario,
+      idCategoria,
     } = req.body;
 
     // Verificar campos requeridos
@@ -23,6 +24,7 @@ exports.crearProveedor = async (req, res) => {
     if (!horarioServicio) camposFaltantes.push("horarioServicio");
     if (!estado) camposFaltantes.push("estado");
     if (!idUsuario) camposFaltantes.push("idUsuario");
+    if (!idCategoria) camposFaltantes.push("idCategoria");
 
     if (camposFaltantes.length > 0) {
       return res.status(400).json({
@@ -41,6 +43,7 @@ exports.crearProveedor = async (req, res) => {
         serviciosDisponibles,
         estado,
         idUsuario,
+        idCategoria,
     );
 
     const proveedorId = await nuevoProveedor.save();
