@@ -2,7 +2,6 @@ const express = require("express");
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
-const {verificarToken} = require("../../autolavado/middlewares/authMiddleware");
 const {
   crearUsuario,
   obtenerUsuarios,
@@ -14,9 +13,9 @@ const {
 
 
 router.post("/", crearUsuario);
-router.get("/", verificarToken, obtenerUsuarios);
-router.get("/:id", verificarToken, obtenerUsuarioPorId);
-router.put("/:id", verificarToken, actualizarUsuario);
-router.delete("/:id", verificarToken, eliminarUsuario);
+router.get("/", obtenerUsuarios);
+router.get("/:id", obtenerUsuarioPorId);
+router.put("/:id", actualizarUsuario);
+router.delete("/:id", eliminarUsuario);
 router.post("/login", loginUsuario);
 module.exports = router;
