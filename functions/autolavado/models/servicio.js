@@ -95,12 +95,14 @@ class Servicio {
    * @return {Promise<Object[]>} Lista de servicios del proveedor.
    */
   static async getByProveedor(idProveedor) {
+    if (!idProveedor) {
+      throw new Error("El ID del proveedor es requerido.");
+    }
     const snapshot = await db.collection(SERVICIOS_COLLECTION)
         .where("idProveedor", "==", idProveedor)
         .get();
-
     if (snapshot.empty) {
-      throw new Error("No hay servicios disponibles para este proveedor.");
+      return []; // Devolver array vacío en lugar de lanzar error
     }
 
     return snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));

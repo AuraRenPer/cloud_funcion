@@ -12,7 +12,8 @@ const {
 
 router.post("/crearservicio", crearServicio);
 router.get("/obtenerservicio", obtenerServicios);
-router.get("/obtenerserviciosproveedor/:id", obtenerServiciosPorProveedor);
+router.get("/obtenerserviciosproveedor/:idProveedor",
+    obtenerServiciosPorProveedor);
 router.put("/actualizarservicio/:id", actualizarServicio);
 router.delete("/eliminarservicio/:id", eliminarServicio);
 
