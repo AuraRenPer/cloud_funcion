@@ -1,7 +1,6 @@
-const jwt = require("jsonwebtoken");
 const Usuario = require("../models/usuario");
 
-// Función para crear el token JWT al registrar el usuario
+// Crear un nuevo usuario
 exports.crearUsuario = async (req, res) => {
   try {
     const {
@@ -23,44 +22,27 @@ exports.crearUsuario = async (req, res) => {
       !telefono ||
       !fechaRegistro ||
       !rol ||
-      !estatus
-    ) {
+      !estatus) {
       return res.status(400).json({
         error: "Todos los campos son obligatorios",
       });
     }
 
     const nuevoUsuario = new Usuario(
-      nombre,
-      apellido,
-      correo,
-      password,
-      telefono,
-      fechaRegistro,
-      rol,
-      estatus
-    );
-    const usuarioId = await nuevoUsuario.save();
-
-    // Crear el token JWT con los datos necesarios
-    const token = jwt.sign(
-      {
-        id: usuarioId,
-        correo,
-        username: correo, // O si tienes otro campo como username, puedes usarlo aquí
         nombre,
         apellido,
+        correo,
+        password,
         telefono,
+        fechaRegistro,
         rol,
-      },
-      process.env.JWT_SECRET_KEY, // Asegúrate de tener una clave secreta en tu .env
-      { expiresIn: "1h" } // El token expirará en una hora (ajusta según lo que necesites)
+        estatus,
     );
+    const usuarioId = await nuevoUsuario.save();
 
     res.status(201).json({
       id: usuarioId,
       mensaje: "Usuario registrado exitosamente",
-      token, // Devuelves el token junto con el mensaje de éxito
     });
   } catch (error) {
     res.status(500).json({
@@ -69,7 +51,6 @@ exports.crearUsuario = async (req, res) => {
     });
   }
 };
-
 
 // Obtener todos los usuarios
 exports.obtenerUsuarios = async (req, res) => {
