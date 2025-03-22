@@ -12,15 +12,15 @@ class Vehiculo {
    * @param {string} idUsuario - ID del usuario dueño del vehículo.
    * @param {string} marca - Marca del vehículo.
    * @param {string} modelo - Modelo del vehículo.
-   * @param {number} año - Año del vehículo.
+   * @param {number} year - Año del vehículo.
    * @param {string} placa - Placa del vehículo.
    * @param {string} color - Color del vehículo.
    */
-  constructor(idUsuario, marca, modelo, año, placa, color) {
+  constructor(idUsuario, marca, modelo, year, placa, color) {
     this.idUsuario = idUsuario;
     this.marca = marca;
     this.modelo = modelo;
-    this.año = año;
+    this.year = year;
     this.placa = placa;
     this.color = color;
   }
@@ -35,7 +35,7 @@ class Vehiculo {
       idUsuario: this.idUsuario,
       marca: this.marca,
       modelo: this.modelo,
-      año: this.año,
+      year: this.year,
       placa: this.placa,
       color: this.color,
     });

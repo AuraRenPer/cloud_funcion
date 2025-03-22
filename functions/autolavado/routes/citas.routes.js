@@ -11,7 +11,7 @@ const {
 
 router.post("/crearcita", crearCita);
 router.get("/obtenercitas", obtenerCitas);
-router.get("/obtenercitausuario/:id", obtenerCitasPorUsuario);
-router.get("/obtenercitaproveedor/:id", obtenerCitasPorProveedor);
+router.get("/obtenercitausuario/:idUsuario", obtenerCitasPorUsuario);
+router.get("/obtenercitaproveedor/:idProveedor", obtenerCitasPorProveedor);
 
 module.exports = router;

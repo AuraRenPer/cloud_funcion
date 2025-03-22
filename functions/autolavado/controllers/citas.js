@@ -67,6 +67,13 @@ exports.obtenerCitas = async (req, res) => {
 exports.obtenerCitasPorUsuario = async (req, res) => {
   try {
     const {idUsuario} = req.params;
+
+    if (!idUsuario) {
+      return res.status(400).json({
+        error: "ID de usuario no proporcionado",
+      });
+    }
+
     const citas = await Citas.getByUsuario(idUsuario);
     res.status(200).json(citas);
   } catch (error) {
@@ -76,6 +83,7 @@ exports.obtenerCitasPorUsuario = async (req, res) => {
     });
   }
 };
+
 
 // Obtener citas de un proveedor
 exports.obtenerCitasPorProveedor = async (req, res) => {
