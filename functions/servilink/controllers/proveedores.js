@@ -121,3 +121,19 @@ exports.eliminarProveedor = async (req, res) => {
     });
   }
 };
+
+exports.obtenerProveedoresPorCategoria = async (req, res) => {
+  try {
+    const {idCategoria} = req.params;
+
+    const proveedores = await Proveedor.getByCategoria(idCategoria);
+
+    res.status(200).json(proveedores);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener proveedores por categoría",
+      detalle: error.message,
+    });
+  }
+};
+
