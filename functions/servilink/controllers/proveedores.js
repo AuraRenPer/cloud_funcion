@@ -1,4 +1,5 @@
 const Proveedor = require("../models/proveedor");
+const Usuario = require("../models/usuario");
 
 // Crear un nuevo proveedor
 exports.crearProveedor = async (req, res) => {
@@ -47,6 +48,7 @@ exports.crearProveedor = async (req, res) => {
     );
 
     const proveedorId = await nuevoProveedor.save();
+    await Usuario.updateById(idUsuario, {rol: "proveedor"});
 
     res.status(201).json({
       idProveedor: proveedorId,
