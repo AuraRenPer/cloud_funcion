@@ -137,3 +137,25 @@ exports.obtenerProveedoresPorCategoria = async (req, res) => {
   }
 };
 
+// Obtener proveedores que tienen servicios disponibles
+exports.obtenerProveedoresConServicios = async (req, res) => {
+  try {
+    const proveedores = await Proveedor.getAll();
+
+    // Filtrar los que tengan serviciosDisponibles no vacíos
+    const conServicios = proveedores.filter((p) =>
+      Array.isArray(
+          p.serviciosDisponibles,
+      ) && p.serviciosDisponibles.length > 0,
+    );
+
+    res.status(200).json(conServicios);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener proveedores con servicios",
+      detalle: error.message,
+    });
+  }
+};
+
+
