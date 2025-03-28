@@ -14,7 +14,7 @@ router.post("/crearsolicitud", crearSolicitudController);
 router.get("/obtenersolicitudes", obtenerSolicitudesController);
 router.get("/obtenerporusuario/:idUsuario",
     obtenerSolicitudesPorUsuarioController);
-router.get("/obtenerporproveedor/:idProveedor",
+router.get("/obteneerporproveedor/:idProveedor",
     obtenerSolicitudesPorProveedorController);
 router.patch("/actualizarsolicitud/:idSolicitud",
     actualizarEstadoSolicitudController);

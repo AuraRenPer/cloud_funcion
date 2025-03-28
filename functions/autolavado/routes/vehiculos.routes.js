@@ -2,7 +2,6 @@ const express = require("express");
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
-const {verificarToken} = require("../middlewares/authMiddleware");
 const {
   crearVehiculo,
   obtenerVehiculos,
@@ -12,10 +11,10 @@ const {
 } = require("../controllers/vehiculos");
 
 
-router.post("/", verificarToken, crearVehiculo);
-router.get("/", verificarToken, obtenerVehiculos);
-router.get("/:id", verificarToken, obtenerVehiculoPorId);
-router.put("/:id", verificarToken, actualizarVehiculo);
-router.delete("/:id", verificarToken, eliminarVehiculo);
+router.post("/crearvehiculo", crearVehiculo);
+router.get("/obtenervehiculos", obtenerVehiculos);
+router.get("/obtenervehiculo/:id", obtenerVehiculoPorId);
+router.put("/actualizarvehiculo/:id", actualizarVehiculo);
+router.delete("/eliminarvehiculo/:id", eliminarVehiculo);
 
 module.exports = router;

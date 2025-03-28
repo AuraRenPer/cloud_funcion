@@ -1,9 +1,7 @@
 const Solicitud = require("../models/solicitud");
-const Usuario = require("../models/usuario");
-const Servicio = require("../models/servicio");
-const Cita = require("../models/citas");
 const {
   obtenerSolicitudes,
+  obtenerSolicitudesPorUsuario,
   obtenerSolicitudesPorProveedor,
   actualizarEstadoSolicitud,
 } = require("../models/solicitud");
@@ -66,33 +64,14 @@ exports.obtenerSolicitudesController = async (req, res) => {
  */
 exports.obtenerSolicitudesPorUsuarioController = async (req, res) => {
   try {
-    const idProveedor = req.params.idProveedor;
-    const solicitudes = await Solicitud.getByProveedor(idProveedor);
-
-    // Enriquecer cada solicitud con más datos
-    const solicitudesEnriquecidas = await Promise.all(
-        solicitudes.map(async (s) => {
-          const usuario = await Usuario.getById(s.idUsuario);
-          const servicio = await Servicio.getById(s.idServicio);
-          const cita = await Cita.getById(s.idCita);
-
-          return {
-            ...s,
-            nombreUsuario:
-          (usuario && usuario.nombre) ? usuario.nombre : "Desconocido",
-            nombreServicio:
-          (servicio && servicio.nombre) ? servicio.nombre : "Servicio",
-            fechaCita:
-          (cita && cita.fechaCita) ? cita.fechaCita : "No especificada",
-          };
-        }),
-    );
-
-    res.status(200).json(solicitudesEnriquecidas);
+    const {idUsuario} = req.params;
+    const solicitudes = await obtenerSolicitudesPorUsuario(idUsuario);
+    return res.status(200).json({success: true, data: solicitudes});
   } catch (error) {
-    res.status(500).json({
-      error: "Error al obtener solicitudes del proveedor",
-      detalle: error.message,
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener solicitudes del usuario.",
+      error,
     });
   }
 };

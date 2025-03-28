@@ -1,4 +1,5 @@
 const Proveedor = require("../models/proveedor");
+const Usuario = require("../models/usuario");
 
 // Crear un nuevo proveedor
 exports.crearProveedor = async (req, res) => {
@@ -47,6 +48,7 @@ exports.crearProveedor = async (req, res) => {
     );
 
     const proveedorId = await nuevoProveedor.save();
+    await Usuario.updateById(idUsuario, {rol: "proveedor"});
 
     res.status(201).json({
       idProveedor: proveedorId,
@@ -119,3 +121,41 @@ exports.eliminarProveedor = async (req, res) => {
     });
   }
 };
+
+exports.obtenerProveedoresPorCategoria = async (req, res) => {
+  try {
+    const {idCategoria} = req.params;
+
+    const proveedores = await Proveedor.getByCategoria(idCategoria);
+
+    res.status(200).json(proveedores);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener proveedores por categoría",
+      detalle: error.message,
+    });
+  }
+};
+
+// Obtener proveedores que tienen servicios disponibles
+exports.obtenerProveedoresConServicios = async (req, res) => {
+  try {
+    const proveedores = await Proveedor.getAll();
+
+    // Filtrar los que tengan serviciosDisponibles no vacíos
+    const conServicios = proveedores.filter((p) =>
+      Array.isArray(
+          p.serviciosDisponibles,
+      ) && p.serviciosDisponibles.length > 0,
+    );
+
+    res.status(200).json(conServicios);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener proveedores con servicios",
+      detalle: error.message,
+    });
+  }
+};
+
+
