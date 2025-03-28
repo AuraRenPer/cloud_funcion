@@ -12,17 +12,20 @@ class Solicitud {
      * @param {string} idUsuario - ID del usuario que agenda la cita.
      * @param {string} idProveedor - ID del proveedor del servicio.
      * @param {string} idServicio - ID del servicio seleccionado.
+     * @param {string} idCita
      * @param {string} estado
      */
   constructor(
       idUsuario,
       idProveedor,
       idServicio,
+      idCita,
       estado = "Pendiente",
   ) {
     this.idUsuario = idUsuario;
     this.idProveedor = idProveedor;
     this.idServicio = idServicio;
+    this.idCita = idCita;
     this.estado = estado;
   }
 
@@ -39,6 +42,7 @@ class Solicitud {
       idUsuario: this.idUsuario,
       idProveedor: this.idProveedor,
       idServicio: this.idServicio,
+      idCita: this.idCita,
       estado: this.estado,
     });
 

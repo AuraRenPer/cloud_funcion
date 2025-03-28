@@ -16,15 +16,19 @@ const {
  */
 exports.crearSolicitudController = async (req, res) => {
   try {
-    const {idUsuario, idProveedor, idServicio} = req.body;
+    const {idUsuario, idProveedor, idServicio, idCita} = req.body;
 
-    if (!idUsuario || !idProveedor || !idServicio) {
+    if (!idUsuario || !idProveedor || !idServicio || !idCita) {
       return res.status(400).json({
         error: "Todos los campos obligatorios deben ser completados.",
       });
     }
 
-    const nuevaSolicitud = new Solicitud(idUsuario, idProveedor, idServicio);
+    const nuevaSolicitud = new Solicitud(
+        idUsuario,
+        idProveedor,
+        idServicio,
+        idCita);
     const solicitudId = await nuevaSolicitud.save();
 
     res.status(201).json({
