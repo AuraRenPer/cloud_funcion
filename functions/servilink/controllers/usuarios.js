@@ -18,19 +18,6 @@ exports.crearUsuario = async (req, res) => {
       estatus,
     } = req.body;
 
-        // Verificar si ya existe el correo
-        const existeCorreo = await Usuario.getByCorreoOrUsername(correo);
-        if (existeCorreo && existeCorreo.correo === correo) {
-          return res.status(409).json({ error: "Ya existe un usuario con ese correo." });
-        }
-    
-        // Verificar si ya existe el username
-        const existeUsername = await Usuario.getByCorreoOrUsername(username);
-        if (existeUsername && existeUsername.username === username) {
-          return res.status(409).json({ error: "Ya existe un usuario con ese nombre de usuario." });
-        }
-
-
     const camposFaltantes = [];
     if (!nombre) camposFaltantes.push("nombre");
     if (!apellido) camposFaltantes.push("apellido");
@@ -50,6 +37,18 @@ exports.crearUsuario = async (req, res) => {
       });
     }
 
+    // Verificar si el correo ya existe
+    const usuarioExistentePorCorreo = await Usuario.getByCorreoOrUsername(correo);
+    if (usuarioExistentePorCorreo) {
+      return res.status(400).json({ error: "El correo ya está registrado" });
+    }
+
+    // Verificar si el username ya existe
+    const usuarioExistentePorUsername = await Usuario.getByCorreoOrUsername(username);
+    if (usuarioExistentePorUsername) {
+      return res.status(400).json({ error: "El nombre de usuario ya está en uso" });
+    }
+    
     console.log("Contraseña recibida en API:", password);
 
     const nuevoUsuario = new Usuario(
