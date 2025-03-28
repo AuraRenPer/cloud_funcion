@@ -151,4 +151,17 @@ class Usuario {
   }
 }
 
+// Verificar si ya existe un usuario con el mismo correo
+const usuarioConCorreo = await Usuario.getByCorreo(correo);
+if (usuarioConCorreo) {
+  return res.status(400).json({ error: "El correo ya está registrado." });
+}
+
+// Verificar si ya existe un usuario con el mismo username
+const usuarioConUsername = await Usuario.getByUsername(username);
+if (usuarioConUsername) {
+  return res.status(400).json({ error: "El nombre de usuario ya está registrado." });
+}
+
+
 module.exports = Usuario;
