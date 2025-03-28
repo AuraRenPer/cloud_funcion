@@ -5,7 +5,7 @@ const SECRET_KEY = "m1_c14v3_53cr374_muy_larg4_y_d1f1c1l_d3_ad1v1nar";
 
 // Crear un nuevo usuario
 exports.crearUsuario = async (req, res) => {
-  console.log("SE VA A EMPEZAR A CREAR USUARIO")
+  
   try {
     const {
       nombre,
@@ -37,8 +37,9 @@ exports.crearUsuario = async (req, res) => {
          ${camposFaltantes.join(", ")}`,
       });
     }
-
+    console.log("SE VA A EMPEZAR A CREAR USUARIO");
     console.log("Contraseña recibida en API:", password);
+    console.log("SE VA A EMPEZAR A CREAR USUARIO2");
  // Validar si el correo ya está registrado
 const correoExistente = await Usuario.getByCorreoOrUsername(correo);
 if (correoExistente && correoExistente.correo === correo) {
