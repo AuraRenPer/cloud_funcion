@@ -151,16 +151,32 @@ class Usuario {
   }
 }
 
-// Verificar si ya existe un usuario con el mismo correo
-const usuarioConCorreo = await Usuario.getByCorreo(correo);
-if (usuarioConCorreo) {
-  return res.status(400).json({ error: "El correo ya está registrado." });
+static async getByCorreo(correo) {
+  const snapshot = await db.collection(USUARIOS_COLLECTION)
+    .where("correo", "==", correo)
+    .limit(1)
+    .get();
+
+  if (!snapshot.empty) {
+    const doc = snapshot.docs[0];
+    return { id: doc.id, ...doc.data() };
+  }
+
+  return null;
 }
 
-// Verificar si ya existe un usuario con el mismo username
-const usuarioConUsername = await Usuario.getByUsername(username);
-if (usuarioConUsername) {
-  return res.status(400).json({ error: "El nombre de usuario ya está registrado." });
+static async getByUsername(username) {
+  const snapshot = await db.collection(USUARIOS_COLLECTION)
+    .where("username", "==", username)
+    .limit(1)
+    .get();
+
+  if (!snapshot.empty) {
+    const doc = snapshot.docs[0];
+    return { id: doc.id, ...doc.data() };
+  }
+
+  return null;
 }
 
 
