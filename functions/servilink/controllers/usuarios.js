@@ -19,7 +19,10 @@ exports.crearUsuario = async (req, res) => {
     } = req.body;
 
     // Validar si el correo ya existe
-const correoExistente = await Usuario.findOne({ correo });
+    const correoExistente = await Usuario.findOne({ correo });
+    console.log("🔍 Buscando usuario con correo:", correo);
+    console.log("📌 Resultado de la búsqueda:", correoExistente);
+    
 if (correoExistente) {
   return res.status(400).json({
     message: "Este correo electrónico ya está registrado.",
