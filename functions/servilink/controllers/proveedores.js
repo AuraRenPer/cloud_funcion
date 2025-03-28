@@ -1,5 +1,6 @@
 const Proveedor = require("../models/proveedor");
 const Usuario = require("../models/usuario");
+const Servicio = require("../models/servicio");
 
 // Crear un nuevo proveedor
 exports.crearProveedor = async (req, res) => {
@@ -142,12 +143,20 @@ exports.obtenerProveedoresConServicios = async (req, res) => {
   try {
     const proveedores = await Proveedor.getAll();
 
-    // Filtrar los que tengan serviciosDisponibles no vacíos
-    const conServicios = proveedores.filter((p) =>
-      Array.isArray(
-          p.serviciosDisponibles,
-      ) && p.serviciosDisponibles.length > 0,
-    );
+    const conServicios = [];
+
+    for (const proveedor of proveedores) {
+      if (
+        Array.isArray(proveedor.serviciosDisponibles) &&
+        proveedor.serviciosDisponibles.length > 0
+      ) {
+        const servicios = await Servicio.getMultipleByIds(
+            proveedor.serviciosDisponibles,
+        );
+        proveedor.serviciosDisponibles = servicios;
+        conServicios.push(proveedor);
+      }
+    }
 
     res.status(200).json(conServicios);
   } catch (error) {
