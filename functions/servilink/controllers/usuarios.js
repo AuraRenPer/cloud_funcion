@@ -40,17 +40,17 @@ exports.crearUsuario = async (req, res) => {
     console.log("SE VA A EMPEZAR A CREAR USUARIO");
     console.log("Contraseña recibida en API:", password);
     console.log("SE VA A EMPEZAR A CREAR USUARIO2");
- // Validar si el correo ya está registrado
-const correoExistente = await Usuario.getByCorreoOrUsername(correo);
-if (correoExistente && correoExistente.correo === correo) {
+    
+const usuarioConCorreo = await Usuario.getByCorreo(correo);
+if (usuarioConCorreo) {
   return res.status(400).json({ error: "El correo ya está registrado." });
 }
 
-// Validar si el nombre de usuario ya está registrado
-const usernameExistente = await Usuario.getByCorreoOrUsername(username);
-if (usernameExistente && usernameExistente.username === username) {
+const usuarioConUsername = await Usuario.getByUsername(username);
+if (usuarioConUsername) {
   return res.status(400).json({ error: "El nombre de usuario ya está registrado." });
 }
+
     const nuevoUsuario = new Usuario(
         nombre,
         apellido,
