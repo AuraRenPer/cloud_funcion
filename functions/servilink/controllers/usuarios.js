@@ -37,6 +37,9 @@ exports.crearUsuario = async (req, res) => {
       });
     }
 
+    console.log("▶ Validando duplicados de correo y username");
+
+
     console.log("Contraseña recibida en API:", password);
 
     // Verificar si ya existe un usuario con el mismo correo
