@@ -137,6 +137,7 @@ exports.actualizarEstadoSolicitudController = async (req, res) => {
       "Aceptada",
       "Rechazada",
       "En proceso",
+      "Completada",
     ].includes(estado)) {
       return res.status(400).json({
         success: false,
@@ -159,6 +160,25 @@ exports.actualizarEstadoSolicitudController = async (req, res) => {
       success: false,
       message: "Error al actualizar estado de la solicitud.",
       error,
+    });
+  }
+};
+
+exports.obtenerSolicitudesPopuladasPorProveedor = async (req, res) => {
+  const {idProveedor} = req.params;
+
+  try {
+    const solicitudes =
+    await Solicitud.obtenerPopuladasPorProveedor(idProveedor);
+    res.status(200).json({success: true, data: solicitudes});
+  } catch (error) {
+    console.error(
+        "Error al obtener solicitudes populadas:",
+        error,
+    );
+    res.status(500).json({
+      success: false,
+      error: "Error al obtener solicitudes.",
     });
   }
 };

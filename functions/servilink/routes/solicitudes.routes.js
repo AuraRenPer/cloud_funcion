@@ -8,6 +8,7 @@ const {
   obtenerSolicitudesPorUsuarioController,
   obtenerSolicitudesPorProveedorController,
   actualizarEstadoSolicitudController,
+  obtenerSolicitudesPopuladasPorProveedor,
 } = require("../controllers/solicitudes");
 
 router.post("/crearsolicitud", crearSolicitudController);
@@ -18,5 +19,7 @@ router.get("/obtenerporproveedor/:idProveedor",
     obtenerSolicitudesPorProveedorController);
 router.patch("/actualizarsolicitud/:idSolicitud",
     actualizarEstadoSolicitudController);
+router.get("/obtenerpopuladaporproveedor/:idProveedor",
+    obtenerSolicitudesPopuladasPorProveedor);
 
 module.exports = router;
