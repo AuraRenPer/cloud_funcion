@@ -35,28 +35,20 @@ exports.crearUsuario = async (req, res) => {
       });
     }
 
-    // Verificar si el correo ya está registrado
     const correoExistente = await Usuario.getByCorreo(correo);
-    if (correoExistente) {
-      return res.status(400).json({
-        error: "El correo electrónico ya está en uso.",
-      });
-    }
+      console.log("Correo existente:", correoExistente);
 
-    // Verificar si el nombre de usuario ya está registrado
-    const usernameExistente = await Usuario.getByUsername(username);
-    if (usernameExistente) {
-      return res.status(400).json({
-        error: "El nombre de usuario ya está en uso.",
-      });
-    }
+      const usernameExistente = await Usuario.getByUsername(username);
+      console.log("Username existente:", usernameExistente);
 
-    // Verificar si el correo y el nombre de usuario son iguales
-    if (correo === username) {
-      return res.status(400).json({
-        error: "El correo no puede ser el mismo que el nombre de usuario.",
-      });
-    }
+      if (correoExistente) {
+        return res.status(400).json({ error: "El correo electrónico ya está en uso." });
+      }
+
+      if (usernameExistente) {
+        return res.status(400).json({ error: "El nombre de usuario ya está en uso." });
+      }
+
 
     // Encriptar la contraseña
     const salt = bcrypt.genSaltSync(10);
