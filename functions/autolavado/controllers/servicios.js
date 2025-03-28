@@ -4,36 +4,44 @@ const Servicio = require("../models/servicio");
 exports.crearServicio = async (req, res) => {
   try {
     const {
-      nombreServicio,
-      descripcion,
+      nombre,
+      descripcionProblema,
       precio,
-      duracionEstimada,
+      duracion,
+      imagen,
+      tipoServicio,
       idProveedor,
+      ubicacionPersona,
     } = req.body;
 
     if (
-      !nombreServicio ||
-      !descripcion ||
+      !nombre ||
+      !descripcionProblema ||
       !precio ||
-      !duracionEstimada ||
+      !duracion ||
+      !tipoServicio ||
       !idProveedor
     ) {
       return res.status(400).json({
-        error: "Todos los campos son obligatorios",
+        error: "Todos los campos obligatorios deben ser completados.",
       });
     }
 
     const nuevoServicio = new Servicio(
-        nombreServicio,
-        descripcion,
+        nombre,
+        descripcionProblema,
         precio,
-        duracionEstimada,
+        duracion,
+        imagen,
+        tipoServicio,
         idProveedor,
+        ubicacionPersona || null,
     );
+
     const servicioId = await nuevoServicio.save();
 
     res.status(201).json({
-      id: servicioId,
+      idServicio: servicioId,
       mensaje: "Servicio registrado exitosamente",
     });
   } catch (error) {
@@ -57,28 +65,50 @@ exports.obtenerServicios = async (req, res) => {
   }
 };
 
-// Obtener un servicio por ID
-exports.obtenerServicioPorId = async (req, res) => {
+// Obtener servicios de un proveedor
+exports.obtenerServiciosPorProveedor = async (req, res) => {
   try {
-    const {id} = req.params;
-    const servicio = await Servicio.getById(id);
-    res.status(200).json(servicio);
+    const {idProveedor} = req.params;
+
+    if (!idProveedor) {
+      return res.status(400).json({
+        error: "ID del proveedor no proporcionado.",
+      });
+    }
+
+    console.log("🔍 ID del proveedor recibido:", idProveedor); // Debug
+
+    const servicios = await Servicio.getByProveedor(idProveedor);
+    res.status(200).json(servicios);
   } catch (error) {
+    console.error("❌ Error al obtener los servicios del proveedor:", error);
     res.status(500).json({
-      error: "Error al obtener el servicio",
+      error: "Error al obtener los servicios del proveedor",
       detalle: error.message,
     });
   }
 };
+
 
 // Actualizar un servicio
 exports.actualizarServicio = async (req, res) => {
   try {
     const {id} = req.params;
     const datosActualizados = req.body;
-    await Servicio.updateById(id, datosActualizados);
+
+    if (!Object.keys(datosActualizados).length) {
+      return res.status(400).json({
+        error: "Debe proporcionar datos para actualizar.",
+      });
+    }
+
+    const servicioActualizado = await Servicio.updateById(
+        id, datosActualizados,
+    );
+
     res.status(200).json({
       mensaje: "Servicio actualizado correctamente",
+      servicio: servicioActualizado,
     });
   } catch (error) {
     res.status(500).json({
@@ -93,6 +123,7 @@ exports.eliminarServicio = async (req, res) => {
   try {
     const {id} = req.params;
     await Servicio.deleteById(id);
+
     res.status(200).json({
       mensaje: "Servicio eliminado correctamente",
     });

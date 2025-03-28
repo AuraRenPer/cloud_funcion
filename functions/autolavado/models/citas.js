@@ -4,39 +4,36 @@ const db = admin.firestore();
 const CITAS_COLLECTION = "citas";
 
 /**
- * Clase para representar una Cita. (Autolavado)
+ * Clase para representar una Cita de servicio.
  */
-class Citas {
+class Cita {
   /**
-  * Constructor de la clase Citas.
-  * @param {string} id - ID de la cita.
-  * @param {string} idCliente - ID del cliente.
-  * @param {string} idProveedor - ID del proveedor.
-  * @param {string} idServicio - ID del servicio.
-  * @param {string} idVehiculo - ID del vehículo.
-  * @param {string} fechaCita - Fecha de la cita.
-  * @param {string} horaCita - Hora de la cita.
-  * @param {string} estatus - Estado de la cita.
-  *
-  */
+   * Constructor de la clase Cita.
+   * @param {string} idUsuario - ID del usuario que agenda la cita.
+   * @param {string} idProveedor - ID del proveedor del servicio.
+   * @param {string} idServicio - ID del servicio seleccionado.
+   * @param {string} idVehiculo - ID de vehiculo
+   * @param {string} fechaCita - Fecha de la cita (YYYY-MM-DD).
+   * @param {string} horaCita - Hora de la cita (HH:mm).
+   * @param {string} estado
+   * - Estado de la cita (Pendiente, Confirmada, Cancelada, Completada).
+   */
   constructor(
-      id,
-      idCliente,
+      idUsuario,
       idProveedor,
       idServicio,
       idVehiculo,
       fechaCita,
       horaCita,
-      estatus,
+      estado = "Pendiente",
   ) {
-    this.id = id;
-    this.idCliente = idCliente;
+    this.idUsuario = idUsuario;
     this.idProveedor = idProveedor;
     this.idServicio = idServicio;
     this.idVehiculo = idVehiculo;
-    this.fechaCita = fechaCita || "No especificada"; // Valor por defecto
-    this.horaCita = horaCita || "No especificada";
-    this.estatus = estatus || "pendiente";
+    this.fechaCita = fechaCita;
+    this.horaCita = horaCita;
+    this.estado = estado;
   }
 
   /**
@@ -45,16 +42,20 @@ class Citas {
    */
   async save() {
     const citaRef = db.collection(CITAS_COLLECTION).doc();
+    const idCita = citaRef.id;
+
     await citaRef.set({
-      idCliente: this.idCliente,
+      idCita: idCita,
+      idUsuario: this.idUsuario,
       idProveedor: this.idProveedor,
       idServicio: this.idServicio,
       idVehiculo: this.idVehiculo,
       fechaCita: this.fechaCita,
       horaCita: this.horaCita,
-      estatus: this.estatus,
+      estado: this.estado,
     });
-    return citaRef.id;
+
+    return idCita;
   }
 
   /**
@@ -63,19 +64,13 @@ class Citas {
    */
   static async getAll() {
     const snapshot = await db.collection(CITAS_COLLECTION).get();
-
-    if (snapshot.empty) {
-      return [];
-    }
-
     return snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
   }
-
 
   /**
    * Obtiene una cita por su ID.
    * @param {string} id - ID de la cita.
-   * @return {Promise<Object>} Cita.
+   * @return {Promise<Object>} Datos de la cita.
    */
   static async getById(id) {
     const doc = await db.collection(CITAS_COLLECTION).doc(id).get();
@@ -86,45 +81,30 @@ class Citas {
   }
 
   /**
-   * Actualiza una cita en Firestore.
-   * @param {string} id - ID de la cita.
-   * @param {Object} data - Datos de la cita a actualizar.
-   * @return {Promise<void>} - Datos actualizados de laa cita
+   * Obtiene todas las citas de un usuario.
+   * @param {string} idUsuario - ID del usuario.
+   * @return {Promise<Object[]>} Lista de citas del usuario.
    */
-  static async updateById(id, data) {
-    await db.collection(CITAS_COLLECTION).doc(id).update(data);
-    return {id, ...data};
+  static async getByUsuario(idUsuario) {
+    const snapshot = await db.collection(CITAS_COLLECTION)
+        .where("idUsuario", "==", idUsuario)
+        .get();
+
+    return snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
   }
 
   /**
-   * Elimina una cita de Firestore.
-   * @param {string} id - ID de la cita.
-   * @return {Promise<void>}
+   * Obtiene todas las citas de un proveedor.
+   * @param {string} idProveedor - ID del proveedor.
+   * @return {Promise<Object[]>} Lista de citas del proveedor.
    */
-  static async deleteById(id) {
-    await db.collection(CITAS_COLLECTION).doc(id).delete();
-    return {id, message: "Cita eliminada"};
-  }
+  static async getByProveedor(idProveedor) {
+    const snapshot = await db.collection(CITAS_COLLECTION)
+        .where("idProveedor", "==", idProveedor)
+        .get();
 
-  /**
-   * Obtiene todas las citas de un cliente.
-   * @param {string} idCliente - ID del cliente.
-   * @return {Promise<Object[]>} Lista de citas.
-   */
-  static async getByUserId(idCliente) {
-    const snapshot = await db.collection(CITAS_COLLECTION).where(
-        "idCliente",
-        "==",
-        idCliente,
-    ).get();
-    if (snapshot.empty) {
-      return [];
-    }
-
-    return snapshot.docs.map((doc) => ({id: doc.id, ...doc
-        .data()}
-    ));
+    return snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
   }
 }
 
-module.exports = Citas;
+module.exports = Cita;

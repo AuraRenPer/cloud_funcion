@@ -4,121 +4,88 @@ const db = admin.firestore();
 const HISTORIAL_COLLECTION = "historial_servilink";
 
 /**
- * Clase para representar una Historial. (Autolavado)
+ * Clase para representar un Historial de Citas.
  */
 class Historial {
   /**
-  * Constructor de la clase Historials.
-  * @param {string} idCliente - ID del cliente.
+  * Constructor de la clase Historial.
+  * @param {string} idCita - ID de la cita.
+  * @param {string} idUsuario - ID del usuario.
   * @param {string} idProveedor - ID del proveedor.
   * @param {string} idServicio - ID del servicio.
-  * @param {string} fechaHistorial - Fecha de la Historial.
-  * @param {string} horaHistorial - Hora de la Historial.
-  * @param {string} estatus - Estado de la Historial.
-  *
+  * @param {string} fechaRealizacion - Fecha de la realización del servicio.
+  * @param {string} estatus
+  *  - Estado de la cita (Pendiente, Confirmada, Cancelada, Completada).
   */
   constructor(
-      idCliente,
+      idCita,
+      idUsuario,
       idProveedor,
       idServicio,
-      fechaHistorial,
-      horaHistorial,
-      estatus,
+      fechaRealizacion,
+      estatus = "Pendiente", // 🔹 Por defecto
   ) {
-    this.idCliente = idCliente;
+    this.idCita = idCita;
+    this.idUsuario = idUsuario;
     this.idProveedor = idProveedor;
     this.idServicio = idServicio;
-    this.fechaHistorial = fechaHistorial ||
-    "No especificada"; // Valor por defecto
-    this.horaHistorial = horaHistorial ||
-    "No especificada";
-    this.estatus = estatus || "pendiente";
+    this.fechaRealizacion = fechaRealizacion;
+    this.estatus = estatus;
   }
 
   /**
-   * Guarda una nueva Historial en Firestore.
-   * @return {Promise<string>} ID de la Historial guardada.
+   * Guarda un nuevo Historial en Firestore.
+   * @return {Promise<string>} ID del historial guardado.
    */
   async save() {
-    const HistorialRef = db.collection(HISTORIAL_COLLECTION).doc();
-    await HistorialRef.set({
+    const historialRef = db.collection(HISTORIAL_COLLECTION).doc();
+    const idHistorial = historialRef.id;
+
+    await historialRef.set({
+      idHistorial: idHistorial, // 🔹 Se almacena el ID de Firebase
+      idCita: this.idCita,
       idUsuario: this.idUsuario,
       idProveedor: this.idProveedor,
       idServicio: this.idServicio,
-      fechaHistorial: this.fechaHistorial,
-      horaHistorial: this.horaHistorial,
+      fechaRealizacion: this.fechaRealizacion,
       estatus: this.estatus,
     });
-    return HistorialRef.id;
+
+    return idHistorial;
   }
 
   /**
-   * Obtiene todas las Historials de la colección.
-   * @return {Promise<Object[]>} Lista de Historials.
+   * Obtiene todos los historiales.
+   * @return {Promise<Object[]>} Lista de historiales.
    */
   static async getAll() {
     const snapshot = await db.collection(HISTORIAL_COLLECTION).get();
-
-    if (snapshot.empty) {
-      return [];
-    }
-
     return snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
   }
 
-
   /**
-   * Obtiene una Historial por su ID.
-   * @param {string} id - ID de la Historial.
-   * @return {Promise<Object>} Historial.
+   * Obtiene un historial por su ID.
+   * @param {string} id - ID del historial.
+   * @return {Promise<Object>} Datos del historial.
    */
   static async getById(id) {
     const doc = await db.collection(HISTORIAL_COLLECTION).doc(id).get();
     if (!doc.exists) {
-      throw new Error("Historial no encontrada");
+      throw new Error("Historial no encontrado");
     }
     return {id: doc.id, ...doc.data()};
   }
 
   /**
-   * Actualiza una Historial en Firestore.
-   * @param {string} id - ID de la Historial.
-   * @param {Object} data - Datos de la Historial a actualizar.
-   * @return {Promise<void>} - Datos actualizados de laa Historial
+   * Obtiene todos los historiales de un usuario.
+   * @param {string} idUsuario - ID del usuario.
+   * @return {Promise<Object[]>} Lista de historiales del usuario.
    */
-  static async updateById(id, data) {
-    await db.collection(HISTORIAL_COLLECTION).doc(id).update(data);
-    return {id, ...data};
-  }
-
-  /**
-   * Elimina una Historial de Firestore.
-   * @param {string} id - ID de la Historial.
-   * @return {Promise<void>}
-   */
-  static async deleteById(id) {
-    await db.collection(HISTORIAL_COLLECTION).doc(id).delete();
-    return {id, message: "Historial eliminada"};
-  }
-
-  /**
-   * Obtiene todas las Historials de un cliente.
-   * @param {string} idUsuario - ID del cliente.
-   * @return {Promise<Object[]>} Lista de Historials.
-   */
-  static async getByUserId(idUsuario) {
-    const snapshot = await db.collection(HISTORIAL_COLLECTION).where(
-        "idCliente",
-        "==",
-        idUsuario,
-    ).get();
-    if (snapshot.empty) {
-      return [];
-    }
-
-    return snapshot.docs.map((doc) => ({id: doc.id, ...doc
-        .data()}
-    ));
+  static async getByUsuario(idUsuario) {
+    const snapshot = await db.collection(HISTORIAL_COLLECTION)
+        .where("idUsuario", "==", idUsuario)
+        .get();
+    return snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
   }
 }
 

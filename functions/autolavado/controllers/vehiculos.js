@@ -3,9 +3,9 @@ const Vehiculo = require("../models/vehiculos");
 // Crear un nuevo vehículo
 exports.crearVehiculo = async (req, res) => {
   try {
-    const {idUsuario, marca, modelo, año, placa, color} = req.body;
+    const {idUsuario, marca, modelo, year, placa, color} = req.body;
 
-    if (!idUsuario || !marca || !modelo || !año || !placa || !color) {
+    if (!idUsuario || !marca || !modelo || !year || !placa || !color) {
       return res.status(400).json({
         error: "Todos los campos son obligatorios",
       });
@@ -15,7 +15,7 @@ exports.crearVehiculo = async (req, res) => {
         idUsuario,
         marca,
         modelo,
-        año,
+        year,
         placa,
         color,
     );

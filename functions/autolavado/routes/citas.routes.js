@@ -1,23 +1,17 @@
 const express = require("express");
 // eslint-disable-next-line new-cap
 const router = express.Router();
-const {verificarToken} = require("../middlewares/authMiddleware");
 const {
   crearCita,
   obtenerCitas,
-  obtenerCitaPorId,
-  actualizarCita,
-  eliminarCita,
   obtenerCitasPorUsuario,
+  obtenerCitasPorProveedor,
 } = require("../controllers/citas");
 
 
-router.post("/", verificarToken, crearCita);
-router.get("/", verificarToken, obtenerCitas);
-router.get("/:id", verificarToken, obtenerCitaPorId);
-router.put("/:id", verificarToken, actualizarCita);
-router.delete("/:id", verificarToken, eliminarCita);
-router.get("/usuario/:idUsuario", verificarToken, obtenerCitasPorUsuario);
-
+router.post("/crearcita", crearCita);
+router.get("/obtenercitas", obtenerCitas);
+router.get("/obtenercitausuario/:idUsuario", obtenerCitasPorUsuario);
+router.get("/obtenercitaproveedor/:idProveedor", obtenerCitasPorProveedor);
 
 module.exports = router;
