@@ -18,26 +18,22 @@ exports.crearUsuario = async (req, res) => {
       estatus,
     } = req.body;
 
-    // Validar si el correo ya existe
-    const correoExistente = await Usuario.findOne({ correo });
-    console.log("🔍 Buscando usuario con correo:", correo);
-    console.log("📌 Resultado de la búsqueda:", correoExistente);
-    
-if (correoExistente) {
-  return res.status(400).json({
-    message: "Este correo electrónico ya está registrado.",
-  });
-}
+    // Verificar si el correo o el username ya existen
+    const usuarioExistente = await Usuario.getByCorreoOrUsername(correo);
+    if (usuarioExistente) {
+      return res.status(400).json({
+        error: "El correo o el nombre de usuario ya están en uso",
+      });
+    }
 
-// Validar si el nombre de usuario ya existe
-const usernameExistente = await Usuario.findOne({ username });
-if (usernameExistente) {
-  return res.status(400).json({
-    message: "Este nombre de usuario ya está en uso.",
-  });
-}
+    const usernameExistente = await Usuario.getByCorreoOrUsername(username);
+    if (usernameExistente) {
+      return res.status(400).json({
+        error: "El correo o el nombre de usuario ya están en uso",
+      });
+    }
 
-
+    // Continuar con la validación de campos faltantes
     const camposFaltantes = [];
     if (!nombre) camposFaltantes.push("nombre");
     if (!apellido) camposFaltantes.push("apellido");
@@ -51,11 +47,11 @@ if (usernameExistente) {
 
     if (camposFaltantes.length > 0) {
       return res.status(400).json({
-        error:
-          `Los siguientes campos son obligatorios: ${camposFaltantes.join(", ")}`,
+        error: `Los siguientes campos son obligatorios: ${camposFaltantes.join(", ")}`,
       });
     }
 
+    // Crear nuevo usuario
     const nuevoUsuario = new Usuario(
       nombre,
       apellido,
@@ -65,7 +61,7 @@ if (usernameExistente) {
       telefono,
       fechaLogin,
       rol,
-      estatus,
+      estatus
     );
 
     const usuarioId = await nuevoUsuario.save();
@@ -81,7 +77,6 @@ if (usernameExistente) {
     });
   }
 };
-
 
 // Obtener todos los usuarios
 exports.obtenerUsuarios = async (req, res) => {
