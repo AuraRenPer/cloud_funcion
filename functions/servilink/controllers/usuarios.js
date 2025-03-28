@@ -19,20 +19,21 @@ exports.crearUsuario = async (req, res) => {
     } = req.body;
 
     // Validar si el correo ya existe
-    const correoExistente = await Usuario.findOne({ correo });
-    if (correoExistente) {
-      return res.status(400).json({
-        error: "Este correo electrónico ya está registrado.",
-      });
-    }
+const correoExistente = await Usuario.findOne({ correo });
+if (correoExistente) {
+  return res.status(400).json({
+    message: "Este correo electrónico ya está registrado.",
+  });
+}
 
-    // Validar si el nombre de usuario ya existe
-    const usernameExistente = await Usuario.findOne({ username });
-    if (usernameExistente) {
-      return res.status(400).json({
-        error: "Este nombre de usuario ya está en uso.",
-      });
-    }
+// Validar si el nombre de usuario ya existe
+const usernameExistente = await Usuario.findOne({ username });
+if (usernameExistente) {
+  return res.status(400).json({
+    message: "Este nombre de usuario ya está en uso.",
+  });
+}
+
 
     const camposFaltantes = [];
     if (!nombre) camposFaltantes.push("nombre");
