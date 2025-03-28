@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const SECRET_KEY = "m1_c14v3_53cr374_muy_larg4_y_d1f1c1l_d3_ad1v1nar";
 
 // Crear un nuevo usuario
-// Crear un nuevo usuario
 exports.crearUsuario = async (req, res) => {
   try {
     const {
@@ -49,6 +48,13 @@ exports.crearUsuario = async (req, res) => {
     if (usernameExistente) {
       return res.status(400).json({
         error: "El nombre de usuario ya está en uso.",
+      });
+    }
+
+    // Verificar si el correo y el nombre de usuario son iguales
+    if (correo === username) {
+      return res.status(400).json({
+        error: "El correo no puede ser el mismo que el nombre de usuario.",
       });
     }
 
