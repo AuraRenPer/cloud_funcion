@@ -18,6 +18,22 @@ exports.crearUsuario = async (req, res) => {
       estatus,
     } = req.body;
 
+    // Validar si el correo ya existe
+    const correoExistente = await Usuario.findOne({ correo });
+    if (correoExistente) {
+      return res.status(400).json({
+        error: "Este correo electrónico ya está registrado.",
+      });
+    }
+
+    // Validar si el nombre de usuario ya existe
+    const usernameExistente = await Usuario.findOne({ username });
+    if (usernameExistente) {
+      return res.status(400).json({
+        error: "Este nombre de usuario ya está en uso.",
+      });
+    }
+
     const camposFaltantes = [];
     if (!nombre) camposFaltantes.push("nombre");
     if (!apellido) camposFaltantes.push("apellido");
@@ -31,42 +47,23 @@ exports.crearUsuario = async (req, res) => {
 
     if (camposFaltantes.length > 0) {
       return res.status(400).json({
-        error: `Los siguientes campos son obligatorios: ${camposFaltantes.join(", ")}`,
+        error:
+          `Los siguientes campos son obligatorios: ${camposFaltantes.join(", ")}`,
       });
     }
-
-    const correoExistente = await Usuario.getByCorreo(correo);
-      console.log("Correo existente:", correoExistente);
-
-      const usernameExistente = await Usuario.getByUsername(username);
-      console.log("Username existente:", usernameExistente);
-
-      if (correoExistente) {
-        return res.status(400).json({ error: "El correo electrónico ya está en uso." });
-      }
-
-      if (usernameExistente) {
-        return res.status(400).json({ error: "El nombre de usuario ya está en uso." });
-      }
-
-
-    // Encriptar la contraseña
-    const salt = bcrypt.genSaltSync(10);
-    const passwordEncriptada = bcrypt.hashSync(password, salt);
 
     const nuevoUsuario = new Usuario(
       nombre,
       apellido,
       correo,
-      passwordEncriptada,
+      password,
       username,
       telefono,
       fechaLogin,
       rol,
-      estatus
+      estatus,
     );
 
-    // Guardar el nuevo usuario
     const usuarioId = await nuevoUsuario.save();
 
     res.status(201).json({
@@ -80,6 +77,7 @@ exports.crearUsuario = async (req, res) => {
     });
   }
 };
+
 
 // Obtener todos los usuarios
 exports.obtenerUsuarios = async (req, res) => {
