@@ -17,6 +17,17 @@ exports.crearCita = async (req, res) => {
       });
     }
 
+    const citasProveedor = await Cita.getByProveedor(idProveedor);
+    const citaDuplicada = citasProveedor.find(
+        (c) => c.fechaCita === fechaCita && c.horaCita === horaCita,
+    );
+
+    if (citaDuplicada) {
+      return res.status(409).json({
+        error: "Ya existe una cita para este proveedor en esa fecha y hora.",
+      });
+    }
+
     const nuevaCita = new Cita(
         idUsuario,
         idProveedor,
