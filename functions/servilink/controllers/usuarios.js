@@ -6,6 +6,7 @@ const SECRET_KEY = "m1_c14v3_53cr374_muy_larg4_y_d1f1c1l_d3_ad1v1nar";
 // Crear un nuevo usuario
 // Crear un nuevo usuario
 exports.crearUsuario = async (req, res) => {
+  console.log("Si estoy registrando");
   try {
     const {
       nombre,
