@@ -18,22 +18,19 @@ exports.crearUsuario = async (req, res) => {
       estatus,
     } = req.body;
 
-    // Verificar si el correo o el username ya existen
-    const usuarioExistente = await Usuario.getByCorreoOrUsername(correo);
-    if (usuarioExistente) {
-      return res.status(400).json({
-        error: "El correo o el nombre de usuario ya están en uso",
-      });
-    }
+        // Verificar si ya existe el correo
+        const existeCorreo = await Usuario.getByCorreoOrUsername(correo);
+        if (existeCorreo && existeCorreo.correo === correo) {
+          return res.status(409).json({ error: "Ya existe un usuario con ese correo." });
+        }
+    
+        // Verificar si ya existe el username
+        const existeUsername = await Usuario.getByCorreoOrUsername(username);
+        if (existeUsername && existeUsername.username === username) {
+          return res.status(409).json({ error: "Ya existe un usuario con ese nombre de usuario." });
+        }
 
-    const usernameExistente = await Usuario.getByCorreoOrUsername(username);
-    if (usernameExistente) {
-      return res.status(400).json({
-        error: "El correo o el nombre de usuario ya están en uso",
-      });
-    }
 
-    // Continuar con la validación de campos faltantes
     const camposFaltantes = [];
     if (!nombre) camposFaltantes.push("nombre");
     if (!apellido) camposFaltantes.push("apellido");
@@ -47,21 +44,29 @@ exports.crearUsuario = async (req, res) => {
 
     if (camposFaltantes.length > 0) {
       return res.status(400).json({
-        error: `Los siguientes campos son obligatorios: ${camposFaltantes.join(", ")}`,
+        error:
+        `Los siguientes campos son obligatorios:
+         ${camposFaltantes.join(", ")}`,
       });
     }
 
-    // Crear nuevo usuario
+    console.log("Contraseña recibida en API:", password);
+
     const nuevoUsuario = new Usuario(
-      nombre,
-      apellido,
-      correo,
-      password,
-      username,
-      telefono,
-      fechaLogin,
-      rol,
-      estatus
+        nombre,
+        apellido,
+        correo,
+        password,
+        username,
+        telefono,
+        fechaLogin,
+        rol,
+        estatus,
+    );
+
+    console.log(
+        "Contraseña encriptada antes de guardar:",
+        nuevoUsuario.password,
     );
 
     const usuarioId = await nuevoUsuario.save();
