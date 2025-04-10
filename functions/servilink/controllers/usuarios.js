@@ -110,4 +110,45 @@ exports.eliminarUsuario = async (req, res) => {
       detalle: error.message,
     });
   }
+    // Verificar en paralelo si el correo o username ya existen
+    const [correoExistente, usernameExistente] = await Promise.all([
+      Usuario.getByCorreo(correo),
+      Usuario.getByUsername(username)
+    ]);
+  
+    if (correoExistente && usernameExistente) {
+      return res.status(400).json({
+        error: "El correo electrónico y el nombre de usuario ya están en uso.",
+      });
+    }
+  
+    if (correoExistente) {
+      return res.status(400).json({
+        error: "El correo electrónico ya está en uso.",
+      });
+    }
+  
+    if (usernameExistente) {
+      return res.status(400).json({
+        error: "El nombre de usuario ya está en uso.",
+      });
+    }
+    // Validar formato de correo
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+      return res.status(400).json({
+        error: "El formato del correo electrónico no es válido.",
+      });
+    }
+  
+    // Validar formato de username (ejemplo: solo letras, números y guiones bajos)
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      return res.status(400).json({
+        error: "El nombre de usuario solo puede contener letras, números y guiones bajos.",
+      });
+    }
+    if (password.length < 8) {
+      return res.status(400).json({
+        error: "La contraseña debe tener al menos 8 caracteres.",
+      });
+    }
 };
