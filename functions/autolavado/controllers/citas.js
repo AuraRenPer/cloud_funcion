@@ -1,4 +1,4 @@
-const Citas = require("../models/citas");
+const Cita = require("../models/citas");
 
 // Crear una nueva cita
 exports.crearCita = async (req, res) => {
@@ -7,44 +7,44 @@ exports.crearCita = async (req, res) => {
       idUsuario,
       idProveedor,
       idServicio,
-      idVehiculo,
       fechaCita,
       horaCita,
-      estatus,
     } = req.body;
 
-    if (
-      !idUsuario ||
-        !idProveedor ||
-        !idServicio ||
-        !idVehiculo ||
-        !fechaCita ||
-        !horaCita ||
-        !estatus
-    ) {
+    if (!idUsuario || !idProveedor || !idServicio || !fechaCita || !horaCita) {
       return res.status(400).json({
-        error: "Todos los campos son obligatorios",
+        error: "Todos los campos obligatorios deben ser completados.",
       });
     }
-    const nuevaCita = new Citas(
+
+    const citasProveedor = await Cita.getByProveedor(idProveedor);
+    const citaDuplicada = citasProveedor.find(
+        (c) => c.fechaCita === fechaCita && c.horaCita === horaCita,
+    );
+
+    if (citaDuplicada) {
+      return res.status(409).json({
+        error: "Ya existe una cita para este proveedor en esa fecha y hora.",
+      });
+    }
+
+    const nuevaCita = new Cita(
         idUsuario,
         idProveedor,
         idServicio,
-        idVehiculo,
         fechaCita,
         horaCita,
     );
 
     const citaId = await nuevaCita.save();
 
-
     res.status(201).json({
       idCita: citaId,
-      mensaje: "Cita creada exitosamente",
+      mensaje: "Cita registrada exitosamente",
     });
   } catch (error) {
     res.status(500).json({
-      error: "Error al crear la cita",
+      error: "Error al registrar la cita",
       detalle: error.message,
     });
   }
@@ -53,7 +53,7 @@ exports.crearCita = async (req, res) => {
 // Obtener todas las citas
 exports.obtenerCitas = async (req, res) => {
   try {
-    const citas = await Citas.getAll();
+    const citas = await Cita.getAll();
     res.status(200).json(citas);
   } catch (error) {
     res.status(500).json({
@@ -67,14 +67,7 @@ exports.obtenerCitas = async (req, res) => {
 exports.obtenerCitasPorUsuario = async (req, res) => {
   try {
     const {idUsuario} = req.params;
-
-    if (!idUsuario) {
-      return res.status(400).json({
-        error: "ID de usuario no proporcionado",
-      });
-    }
-
-    const citas = await Citas.getByUsuario(idUsuario);
+    const citas = await Cita.getByUsuario(idUsuario);
     res.status(200).json(citas);
   } catch (error) {
     res.status(500).json({
@@ -84,12 +77,11 @@ exports.obtenerCitasPorUsuario = async (req, res) => {
   }
 };
 
-
 // Obtener citas de un proveedor
 exports.obtenerCitasPorProveedor = async (req, res) => {
   try {
     const {idProveedor} = req.params;
-    const citas = await Citas.getByProveedor(idProveedor);
+    const citas = await Cita.getByProveedor(idProveedor);
     res.status(200).json(citas);
   } catch (error) {
     res.status(500).json({

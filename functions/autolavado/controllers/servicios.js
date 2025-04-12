@@ -1,5 +1,5 @@
 const Servicio = require("../models/servicio");
-
+const Proveedor = require("../models/proveedor");
 // Crear un nuevo servicio
 exports.crearServicio = async (req, res) => {
   try {
@@ -39,6 +39,7 @@ exports.crearServicio = async (req, res) => {
     );
 
     const servicioId = await nuevoServicio.save();
+    await Proveedor.agregarServicioAProveedor(idProveedor, servicioId);
 
     res.status(201).json({
       idServicio: servicioId,
@@ -69,26 +70,15 @@ exports.obtenerServicios = async (req, res) => {
 exports.obtenerServiciosPorProveedor = async (req, res) => {
   try {
     const {idProveedor} = req.params;
-
-    if (!idProveedor) {
-      return res.status(400).json({
-        error: "ID del proveedor no proporcionado.",
-      });
-    }
-
-    console.log("🔍 ID del proveedor recibido:", idProveedor); // Debug
-
     const servicios = await Servicio.getByProveedor(idProveedor);
     res.status(200).json(servicios);
   } catch (error) {
-    console.error("❌ Error al obtener los servicios del proveedor:", error);
     res.status(500).json({
       error: "Error al obtener los servicios del proveedor",
       detalle: error.message,
     });
   }
 };
-
 
 // Actualizar un servicio
 exports.actualizarServicio = async (req, res) => {

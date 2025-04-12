@@ -1,52 +1,55 @@
 const Proveedor = require("../models/proveedor");
+const Usuario = require("../models/usuario");
+const Servicio = require("../models/servicio");
 
 // Crear un nuevo proveedor
 exports.crearProveedor = async (req, res) => {
   try {
     const {
-      nombreAutolavado,
+      nombreEmpresa,
       correo,
       telefono,
       ubicacion,
       horarioServicio,
       serviciosDisponibles,
       estado,
-      capacidadMaxima,
       idUsuario,
     } = req.body;
 
+    // Verificar campos requeridos
     const camposFaltantes = [];
-    if (!nombreAutolavado) camposFaltantes.push("nombreEmpresa");
+    if (!nombreEmpresa) camposFaltantes.push("nombreEmpresa");
     if (!correo) camposFaltantes.push("correo");
     if (!telefono) camposFaltantes.push("telefono");
     if (!ubicacion) camposFaltantes.push("ubicacion");
     if (!horarioServicio) camposFaltantes.push("horarioServicio");
     if (!estado) camposFaltantes.push("estado");
-    if (!capacidadMaxima) camposFaltantes.push("capacidadMaxima");
     if (!idUsuario) camposFaltantes.push("idUsuario");
 
     if (camposFaltantes.length > 0) {
       return res.status(400).json({
         error:
-        `Los siguientes campos son obligatorios: 
+          `Los siguientes campos son obligatorios: 
         ${camposFaltantes.join(", ")}`,
       });
     }
+
     const nuevoProveedor = new Proveedor(
-        nombreAutolavado,
+        nombreEmpresa,
         correo,
         telefono,
         ubicacion,
         horarioServicio,
         serviciosDisponibles,
         estado,
-        capacidadMaxima,
         idUsuario,
     );
+
     const proveedorId = await nuevoProveedor.save();
+    await Usuario.updateById(idUsuario, {rol: "proveedor"});
 
     res.status(201).json({
-      id: proveedorId,
+      idProveedor: proveedorId,
       mensaje: "Proveedor registrado exitosamente",
     });
   } catch (error) {
@@ -56,20 +59,6 @@ exports.crearProveedor = async (req, res) => {
     });
   }
 };
-
-// Obtener todos los proveedores
-exports.obtenerProveedores = async (req, res) => {
-  try {
-    const proveedores = await Proveedor.getAll();
-    res.status(200).json(proveedores);
-  } catch (error) {
-    res.status(500).json({
-      error: "Error al obtener los proveedores",
-      detalle: error.message,
-    });
-  }
-};
-
 
 // Obtener todos los proveedores
 exports.obtenerProveedores = async (req, res) => {
@@ -130,3 +119,52 @@ exports.eliminarProveedor = async (req, res) => {
     });
   }
 };
+
+// Obtener proveedores que tienen servicios disponibles
+exports.obtenerProveedoresConServicios = async (req, res) => {
+  try {
+    const proveedores = await Proveedor.getAll();
+
+    const conServicios = [];
+
+    for (const proveedor of proveedores) {
+      if (
+        Array.isArray(proveedor.serviciosDisponibles) &&
+        proveedor.serviciosDisponibles.length > 0
+      ) {
+        const servicios = await Servicio.getMultipleByIds(
+            proveedor.serviciosDisponibles,
+        );
+        proveedor.serviciosDisponibles = servicios;
+        conServicios.push(proveedor);
+      }
+    }
+
+    res.status(200).json(conServicios);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener proveedores con servicios",
+      detalle: error.message,
+    });
+  }
+};
+
+exports.obtenerPorIdUsuario = async (req, res) => {
+  try {
+    const idUsuario = req.params.idUsuario;
+    const proveedores =
+      await Proveedor.getAll(); // O tu método para obtener todos
+    const proveedor = proveedores.find((p) => p.idUsuario === idUsuario);
+
+    if (!proveedor) {
+      return res.status(404).json({error: "Proveedor no encontrado"});
+    }
+
+    res.json(proveedor);
+  } catch (error) {
+    console.error("Error al obtener proveedor por usuario:", error);
+    res.status(500).json({error: "Error interno del servidor"});
+  }
+};
+
+

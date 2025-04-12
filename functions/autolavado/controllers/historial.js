@@ -48,7 +48,7 @@ exports.crearHistorial = async (req, res) => {
 };
 
 // Obtener todos los historiales
-exports.obtenerHistoriales = async (req, res) => {
+exports.obtenerHistorial = async (req, res) => {
   try {
     const historiales = await Historial.getAll();
     res.status(200).json(historiales);

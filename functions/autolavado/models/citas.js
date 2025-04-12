@@ -1,7 +1,7 @@
 const admin = require("firebase-admin");
 const db = admin.firestore();
 
-const CITAS_COLLECTION = "citas";
+const CITAS_COLLECTION = "citas_servilink";
 
 /**
  * Clase para representar una Cita de servicio.
@@ -12,7 +12,6 @@ class Cita {
    * @param {string} idUsuario - ID del usuario que agenda la cita.
    * @param {string} idProveedor - ID del proveedor del servicio.
    * @param {string} idServicio - ID del servicio seleccionado.
-   * @param {string} idVehiculo - ID de vehiculo
    * @param {string} fechaCita - Fecha de la cita (YYYY-MM-DD).
    * @param {string} horaCita - Hora de la cita (HH:mm).
    * @param {string} estado
@@ -22,7 +21,6 @@ class Cita {
       idUsuario,
       idProveedor,
       idServicio,
-      idVehiculo,
       fechaCita,
       horaCita,
       estado = "Pendiente",
@@ -30,7 +28,6 @@ class Cita {
     this.idUsuario = idUsuario;
     this.idProveedor = idProveedor;
     this.idServicio = idServicio;
-    this.idVehiculo = idVehiculo;
     this.fechaCita = fechaCita;
     this.horaCita = horaCita;
     this.estado = estado;
@@ -49,7 +46,6 @@ class Cita {
       idUsuario: this.idUsuario,
       idProveedor: this.idProveedor,
       idServicio: this.idServicio,
-      idVehiculo: this.idVehiculo,
       fechaCita: this.fechaCita,
       horaCita: this.horaCita,
       estado: this.estado,

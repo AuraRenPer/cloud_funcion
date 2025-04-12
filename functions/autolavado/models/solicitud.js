@@ -12,17 +12,20 @@ class Solicitud {
      * @param {string} idUsuario - ID del usuario que agenda la cita.
      * @param {string} idProveedor - ID del proveedor del servicio.
      * @param {string} idServicio - ID del servicio seleccionado.
+     * @param {string} idCita
      * @param {string} estado
      */
   constructor(
       idUsuario,
       idProveedor,
       idServicio,
+      idCita,
       estado = "Pendiente",
   ) {
     this.idUsuario = idUsuario;
     this.idProveedor = idProveedor;
     this.idServicio = idServicio;
+    this.idCita = idCita;
     this.estado = estado;
   }
 
@@ -39,6 +42,7 @@ class Solicitud {
       idUsuario: this.idUsuario,
       idProveedor: this.idProveedor,
       idServicio: this.idServicio,
+      idCita: this.idCita,
       estado: this.estado,
     });
 
@@ -108,6 +112,37 @@ class Solicitud {
     }
 
     return {id: idSolicitud, ...solicitudActualizada.data()};
+  }
+
+  /**
+     * Actualizar el estado de una solicitud
+     *  @param {string} idProveedor - ID de la solicitud.
+     * @return {Promise<Object[]>} Lista de citas del proveedor.
+    */
+  static async obtenerPopuladasPorProveedor(idProveedor) {
+    const snapshot = await db.collection(SOLICITUDES_COLLECTION)
+        .where("idProveedor", "==", idProveedor)
+        .get();
+
+    const solicitudes = [];
+
+    for (const doc of snapshot.docs) {
+      const solicitud = {id: doc.id, ...doc.data()};
+
+      const [citaDoc, usuarioDoc, servicioDoc] = await Promise.all([
+        db.collection("Citas").doc(solicitud.idCita).get(),
+        db.collection("Usuarios").doc(solicitud.idUsuario).get(),
+        db.collection("Servicios").doc(solicitud.idServicio).get(),
+      ]);
+
+      solicitud.cita = citaDoc.exists ? citaDoc.data() : null;
+      solicitud.usuario = usuarioDoc.exists ? usuarioDoc.data() : null;
+      solicitud.servicio = servicioDoc.exists ? servicioDoc.data() : null;
+
+      solicitudes.push(solicitud);
+    }
+
+    return solicitudes;
   }
 }
 

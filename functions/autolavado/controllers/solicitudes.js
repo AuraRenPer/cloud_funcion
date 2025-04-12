@@ -1,7 +1,9 @@
 const Solicitud = require("../models/solicitud");
+const Usuario = require("../models/usuario");
+const Servicio = require("../models/servicio");
+const Cita = require("../models/citas");
 const {
   obtenerSolicitudes,
-  obtenerSolicitudesPorUsuario,
   obtenerSolicitudesPorProveedor,
   actualizarEstadoSolicitud,
 } = require("../models/solicitud");
@@ -14,15 +16,19 @@ const {
  */
 exports.crearSolicitudController = async (req, res) => {
   try {
-    const {idUsuario, idProveedor, idServicio} = req.body;
+    const {idUsuario, idProveedor, idServicio, idCita} = req.body;
 
-    if (!idUsuario || !idProveedor || !idServicio) {
+    if (!idUsuario || !idProveedor || !idServicio || !idCita) {
       return res.status(400).json({
         error: "Todos los campos obligatorios deben ser completados.",
       });
     }
 
-    const nuevaSolicitud = new Solicitud(idUsuario, idProveedor, idServicio);
+    const nuevaSolicitud = new Solicitud(
+        idUsuario,
+        idProveedor,
+        idServicio,
+        idCita);
     const solicitudId = await nuevaSolicitud.save();
 
     res.status(201).json({
@@ -64,14 +70,33 @@ exports.obtenerSolicitudesController = async (req, res) => {
  */
 exports.obtenerSolicitudesPorUsuarioController = async (req, res) => {
   try {
-    const {idUsuario} = req.params;
-    const solicitudes = await obtenerSolicitudesPorUsuario(idUsuario);
-    return res.status(200).json({success: true, data: solicitudes});
+    const idProveedor = req.params.idProveedor;
+    const solicitudes = await Solicitud.getByProveedor(idProveedor);
+
+    // Enriquecer cada solicitud con más datos
+    const solicitudesEnriquecidas = await Promise.all(
+        solicitudes.map(async (s) => {
+          const usuario = await Usuario.getById(s.idUsuario);
+          const servicio = await Servicio.getById(s.idServicio);
+          const cita = await Cita.getById(s.idCita);
+
+          return {
+            ...s,
+            nombreUsuario:
+          (usuario && usuario.nombre) ? usuario.nombre : "Desconocido",
+            nombreServicio:
+          (servicio && servicio.nombre) ? servicio.nombre : "Servicio",
+            fechaCita:
+          (cita && cita.fechaCita) ? cita.fechaCita : "No especificada",
+          };
+        }),
+    );
+
+    res.status(200).json(solicitudesEnriquecidas);
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error al obtener solicitudes del usuario.",
-      error,
+    res.status(500).json({
+      error: "Error al obtener solicitudes del proveedor",
+      detalle: error.message,
     });
   }
 };
@@ -112,6 +137,7 @@ exports.actualizarEstadoSolicitudController = async (req, res) => {
       "Aceptada",
       "Rechazada",
       "En proceso",
+      "Completada",
     ].includes(estado)) {
       return res.status(400).json({
         success: false,
@@ -134,6 +160,25 @@ exports.actualizarEstadoSolicitudController = async (req, res) => {
       success: false,
       message: "Error al actualizar estado de la solicitud.",
       error,
+    });
+  }
+};
+
+exports.obtenerSolicitudesPopuladasPorProveedor = async (req, res) => {
+  const {idProveedor} = req.params;
+
+  try {
+    const solicitudes =
+    await Solicitud.obtenerPopuladasPorProveedor(idProveedor);
+    res.status(200).json({success: true, data: solicitudes});
+  } catch (error) {
+    console.error(
+        "Error al obtener solicitudes populadas:",
+        error,
+    );
+    res.status(500).json({
+      success: false,
+      error: "Error al obtener solicitudes.",
     });
   }
 };

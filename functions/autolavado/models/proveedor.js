@@ -9,7 +9,7 @@ const PROVEEDORES_COLLECTION = "proveedores";
 class Proveedor {
   /**
    * Constructor de la clase Proveedor.
-   * @param {string} nombreAutolavado - Nombre del proveedor.
+   * @param {string} nombreEmpresa - Nombre del proveedor.
    * @param {string} correo - Correo del proveedor.
    * @param {string} telefono - Teléfono del proveedor.
    * @param {Object} ubicacion
@@ -21,10 +21,11 @@ class Proveedor {
    * @param {string} horarioServicio - Horario de atención.
    * @param {Array<string>} serviciosDisponibles - Lista de IDs de servicios.
    * @param {string} estado - Estado del proveedor (activo/inactivo).
-   * @param {string} idUsuario - ID del usuario vinculado..
+   * @param {string} idUsuario - ID del usuario vinculado.
+   *
   */
   constructor(
-      nombreAutolavado,
+      nombreEmpresa,
       correo,
       telefono,
       ubicacion,
@@ -33,7 +34,7 @@ class Proveedor {
       estado,
       idUsuario,
   ) {
-    this.nombreAutolavado = nombreAutolavado;
+    this.nombreEmpresa = nombreEmpresa;
     this.correo = correo;
     this.telefono = telefono;
     this.ubicacion = ubicacion;
@@ -53,7 +54,7 @@ class Proveedor {
     ).doc();
 
     await proveedorRef.set({
-      nombreAutolavado: this.nombreAutolavado,
+      nombreEmpresa: this.nombreEmpresa,
       correo: this.correo,
       telefono: this.telefono,
       ubicacion: this.ubicacion,
@@ -118,6 +119,19 @@ class Proveedor {
   static async deleteById(id) {
     await db.collection(PROVEEDORES_COLLECTION).doc(id).delete();
     return {id, mensaje: "Proveedor eliminado correctamente"};
+  }
+
+  /**
+   * Elimina un proveedor por su ID.
+   * @param {string} idProveedor - ID del proveedor.
+   * @param {string} idServicio - ID del idServicio.
+   * @return {Promise<Object>} Mensaje de eliminación.
+   */
+  static async agregarServicioAProveedor(idProveedor, idServicio) {
+    const proveedorRef = db.collection(PROVEEDORES_COLLECTION).doc(idProveedor);
+    await proveedorRef.update({
+      serviciosDisponibles: admin.firestore.FieldValue.arrayUnion(idServicio),
+    });
   }
 }
 
