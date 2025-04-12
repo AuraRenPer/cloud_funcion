@@ -10,30 +10,33 @@ exports.crearHistorial = async (req, res) => {
       idProveedor,
       idServicio,
       fechaServicio,
+      fechaRealizacion,
       estatus,
     } = req.body;
 
+    const fecha = fechaServicio || fechaRealizacion;
     if (
       !idCita ||
       !idUsuario ||
       !idProveedor ||
       !idServicio ||
-
-      !fechaServicio ||
-      !estatus) {
+      !fecha ||
+      !estatus
+    ) {
       return res.status(400).json({
         error: "Todos los campos obligatorios deben ser completados.",
       });
     }
 
     const nuevoHistorial = new Historial(
-
         null,
         idUsuario,
         idProveedor,
         idServicio,
-        fechaServicio,
+        fecha,
+        null,
         estatus,
+        idCita,
     );
     const historialId = await nuevoHistorial.save();
 

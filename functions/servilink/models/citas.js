@@ -9,13 +9,14 @@ const CITAS_COLLECTION = "citas_servilink";
 class Cita {
   /**
    * Constructor de la clase Cita.
+   * Se admite `fechaRealizacion` para construir fecha y hora si es necesario.
    * @param {string} idUsuario - ID del usuario que agenda la cita.
    * @param {string} idProveedor - ID del proveedor del servicio.
    * @param {string} idServicio - ID del servicio seleccionado.
    * @param {string} fechaCita - Fecha de la cita (YYYY-MM-DD).
    * @param {string} horaCita - Hora de la cita (HH:mm).
-   * @param {string} estado
-   * - Estado de la cita (Pendiente, Confirmada, Cancelada, Completada).
+   * @param {string} estado - Estado de la cita.
+   * @param {string} fechaRealizacion - (opcional) ISO string para descomponer
    */
   constructor(
       idUsuario,
@@ -24,14 +25,24 @@ class Cita {
       fechaCita,
       horaCita,
       estado = "Pendiente",
+      fechaRealizacion = null,
   ) {
+    // Si se proporciona fechaRealizacion, la descompone
+    if (fechaRealizacion) {
+      const fecha = new Date(fechaRealizacion);
+      this.fechaCita = fecha.toISOString().split("T")[0];
+      this.horaCita = fecha.toTimeString().substring(0, 5);
+    } else {
+      this.fechaCita = fechaCita;
+      this.horaCita = horaCita;
+    }
+
     this.idUsuario = idUsuario;
     this.idProveedor = idProveedor;
     this.idServicio = idServicio;
-    this.fechaCita = fechaCita;
-    this.horaCita = horaCita;
     this.estado = estado;
   }
+
 
   /**
    * Guarda una nueva cita en Firestore.

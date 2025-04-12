@@ -124,3 +124,17 @@ exports.eliminarServicio = async (req, res) => {
     });
   }
 };
+
+// Obtener un servicio por ID
+exports.obtenerServicioPorId = async (req, res) => {
+  try {
+    const {id} = req.params;
+    const servicio = await Servicio.getById(id);
+    res.status(200).json(servicio);
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener el servicio",
+      detalle: error.message,
+    });
+  }
+};

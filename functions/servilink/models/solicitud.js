@@ -26,27 +26,37 @@ class Solicitud {
     this.idProveedor = idProveedor;
     this.idServicio = idServicio;
     this.idCita = idCita;
-    this.estado = estado;
+    this.estado = estado || "Pendiente";
   }
+
 
   /**
    * Guarda una nueva solicitud en Firestore.
    * @return {Promise<string>} ID de la cita guardada.
    */
   async save() {
-    const solicitudRef = db.collection(SOLICITUDES_COLLECTION).doc();
-    const idSolicitud = solicitudRef.id;
+    const ref = db.collection(SOLICITUDES_COLLECTION).doc();
+    this.id = ref.id;
 
-    await solicitudRef.set({
-      idSolicitud: idSolicitud,
+    const data = {
       idUsuario: this.idUsuario,
       idProveedor: this.idProveedor,
       idServicio: this.idServicio,
       idCita: this.idCita,
       estado: this.estado,
-    });
+    };
 
-    return idSolicitud;
+    // Validación básica: evitar campos undefined
+    for (const key in data) {
+      if (data[key] === undefined) {
+        throw new Error(
+            `Campo '${key}' es obligatorio y no puede ser undefined`,
+        );
+      }
+    }
+
+    await ref.set(data);
+    return this.id;
   }
 
   /**

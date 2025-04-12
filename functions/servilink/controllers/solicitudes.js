@@ -1,3 +1,6 @@
+const admin = require("firebase-admin");
+const db = admin.firestore(); // 👈 Esta línea te faltaba
+
 const Solicitud = require("../models/solicitud");
 const Usuario = require("../models/usuario");
 const Servicio = require("../models/servicio");
@@ -83,11 +86,11 @@ exports.obtenerSolicitudesPorUsuarioController = async (req, res) => {
           return {
             ...s,
             nombreUsuario:
-          (usuario && usuario.nombre) ? usuario.nombre : "Desconocido",
+            (usuario && usuario.nombre) ? usuario.nombre : "Desconocido",
             nombreServicio:
-          (servicio && servicio.nombre) ? servicio.nombre : "Servicio",
+            (servicio && servicio.nombre) ? servicio.nombre : "Servicio",
             fechaCita:
-          (cita && cita.fechaCita) ? cita.fechaCita : "No especificada",
+            (cita && cita.fechaCita) ? cita.fechaCita : "No especificada",
           };
         }),
     );
@@ -132,28 +135,43 @@ exports.actualizarEstadoSolicitudController = async (req, res) => {
     const {idSolicitud} = req.params;
     const {estado} = req.body;
 
-    if (![
+    const estadosPermitidos = [
       "Pendiente",
       "Aceptada",
       "Rechazada",
       "En proceso",
       "Completada",
-    ].includes(estado)) {
+    ];
+
+    if (!estadosPermitidos.includes(estado)) {
       return res.status(400).json({
         success: false,
         message: "Estado no válido.",
       });
     }
 
-    const solicitudActualizada = await actualizarEstadoSolicitud(
-        idSolicitud,
-        estado,
-    );
+    // 🔄 Actualizar estado de la solicitud
+    await actualizarEstadoSolicitud(idSolicitud, estado);
+
+    // 🔍 Obtener solicitud para saber qué cita actualizar
+    const solicitudDoc = await db
+        .collection("solicitudes_servilink")
+        .doc(idSolicitud)
+        .get();
+
+    if (solicitudDoc.exists) {
+      const solicitudData = solicitudDoc.data();
+      if (solicitudData && solicitudData.idCita) {
+        await db
+            .collection("citas_servilink")
+            .doc(solicitudData.idCita)
+            .update({estado});
+      }
+    }
 
     res.status(200).json({
       success: true,
-      data: solicitudActualizada,
-      message: "Estado de solicitud actualizado exitosamente.",
+      message: "Estado actualizado en solicitud y cita.",
     });
   } catch (error) {
     return res.status(500).json({
@@ -164,12 +182,13 @@ exports.actualizarEstadoSolicitudController = async (req, res) => {
   }
 };
 
+
 exports.obtenerSolicitudesPopuladasPorProveedor = async (req, res) => {
   const {idProveedor} = req.params;
 
   try {
     const solicitudes =
-    await Solicitud.obtenerPopuladasPorProveedor(idProveedor);
+      await Solicitud.obtenerPopuladasPorProveedor(idProveedor);
     res.status(200).json({success: true, data: solicitudes});
   } catch (error) {
     console.error(
@@ -179,6 +198,21 @@ exports.obtenerSolicitudesPopuladasPorProveedor = async (req, res) => {
     res.status(500).json({
       success: false,
       error: "Error al obtener solicitudes.",
+    });
+  }
+};
+
+exports.obtenerSolicitudesPopuladasPorProveedor = async (req, res) => {
+  try {
+    const {idProveedor} = req.params;
+    const solicitudes = await Solicitud.obtenerPopuladasPorProveedor(
+        idProveedor,
+    );
+    res.status(200).json({success: true, data: solicitudes});
+  } catch (error) {
+    res.status(500).json({
+      error: "Error al obtener solicitudes con información de cita",
+      detalle: error.message,
     });
   }
 };

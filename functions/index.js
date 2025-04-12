@@ -3,30 +3,22 @@ const express = require("express");
 const cors = require("cors");
 const admin = require("firebase-admin");
 
-// 🔹 Verificar si Firebase ya está inicializado antes de inicializarlo
 if (!admin.apps.length) {
   admin.initializeApp();
 }
 
 const app = express();
 
-// ✅ Middleware CORS con configuración explícita
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+// ✅ Middleware CORS aplicado correctamente
+const corsOptions = {
+  origin: "*", // o "http://localhost:8100"
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-}));
+};
 
-// ✅ Manejo manual de las solicitudes preflight OPTIONS
-app.options("*", (req, res) => {
-  res.set({
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE, PATCH",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  });
-  res.status(204).send("");
-});
+app.use(cors(corsOptions)); // ✅ se aplica el middleware
 app.use(express.json());
+
 
 // Tus rutas (no cambies esto)
 const usuariosRoutes = require(

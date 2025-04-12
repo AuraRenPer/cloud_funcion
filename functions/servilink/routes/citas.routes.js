@@ -6,6 +6,10 @@ const {
   obtenerCitas,
   obtenerCitasPorUsuario,
   obtenerFechasOcupadas,
+  obtenerCitaPorId,
+  actualizarCita,
+  eliminarCita,
+  obtenerCitasPorProveedor,
 } = require("../controllers/citas");
 
 
@@ -16,5 +20,6 @@ router.put("/actualizarcita/:id", actualizarCita);
 router.delete("/eliminarcita/:id", eliminarCita);
 router.get("/usuariocitas/:idUsuario", obtenerCitasPorUsuario);
 router.get("/fechasocupadas", obtenerFechasOcupadas);
+router.get("/obtenercitas/proveedor/:idProveedor", obtenerCitasPorProveedor);
 
 module.exports = router;

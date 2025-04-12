@@ -1,7 +1,7 @@
 const admin = require("firebase-admin");
 const db = admin.firestore();
 
-const HISTORIAL_COLLECTION = "historial";
+const HISTORIAL_COLLECTION = "historial_servilink";
 
 /**
  * Clase para representar un historial de servicio en el autolavado.
@@ -14,15 +14,28 @@ class Historial {
    * @param {string} idProveedor - ID del proveedor.
    * @param {string} idServicio - ID del servicio.
    * @param {string} fechaServicio - Fecha del servicio.
+   * @param {string} fechaRealizacion - Fecha.
    * @param {string} estatus - Estado del servicio (completado | cancelado).
+   * @param {string} idCita - Fecha.
    */
-  constructor(id, idUsuario, idProveedor, idServicio, fechaServicio, estatus) {
+  constructor(
+      id,
+      idUsuario,
+      idProveedor,
+      idServicio,
+      fechaServicio,
+      fechaRealizacion,
+      estatus,
+      idCita,
+  ) {
     this.id = id;
     this.idUsuario = idUsuario;
     this.idProveedor = idProveedor;
     this.idServicio = idServicio;
     this.fechaServicio = fechaServicio;
+    this.fechaRealizacion = fechaRealizacion;
     this.estatus = estatus;
+    this.idCita = idCita;
   }
 
   /**
@@ -38,7 +51,9 @@ class Historial {
       idProveedor: this.idProveedor,
       idServicio: this.idServicio,
       fechaServicio: this.fechaServicio,
+      fechaRealizacion: this.fechaRealizacion,
       estatus: this.estatus,
+      idCita: this.idCita,
     });
     return historialRef.id;
   }
