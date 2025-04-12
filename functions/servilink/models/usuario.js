@@ -149,55 +149,40 @@ class Usuario {
 
     return null;
   }
+}
 
+static async getByCorreo(correo) {
+  console.log("Buscando usuario con correo:", correo);
+  const snapshot = await db.collection(USUARIOS_COLLECTION)
+    .where("correo", "==", correo)
+    .limit(1)
+    .get();
 
-   /**
-   * Obtener un usuario por correo.
-   * @param {string} correo - Correo del usuario.
-   * @return {Promise<Object>} Datos del usuario.
-   */
-   static async getByCorreo(correo) {
-    try {
-      const snapshot = await db.collection(USUARIOS_COLLECTION)
-        .where("correo", "==", correo)
-        .limit(1)
-        .get();
-
-      if (snapshot.empty) {
-        throw new Error("Usuario no encontrado");
-      }
-
-      const doc = snapshot.docs[0];
-      return { id: doc.id, ...doc.data() };
-    } catch (error) {
-      throw new Error(error.message);
-    }
+  console.log("Snapshot correo empty?", snapshot.empty);
+  if (!snapshot.empty) {
+    const doc = snapshot.docs[0];
+    console.log("Usuario con correo encontrado:", doc.data());
+    return { id: doc.id, ...doc.data() };
   }
 
-  /**
-   * Obtener un usuario por nombre de usuario (username).
-   * @param {string} username - Nombre de usuario.
-   * @return {Promise<Object>} Datos del usuario.
-   */
-  static async getByUsername(username) {
-    try {
-      const snapshot = await db.collection(USUARIOS_COLLECTION)
-        .where("username", "==", username)
-        .limit(1)
-        .get();
+  return null;
+}
 
-      if (snapshot.empty) {
-        throw new Error("Usuario no encontrado");
-      }
+static async getByUsername(username) {
+  console.log("Buscando usuario con username:", username);
+  const snapshot = await db.collection(USUARIOS_COLLECTION)
+    .where("username", "==", username)
+    .limit(1)
+    .get();
 
-      const doc = snapshot.docs[0];
-      return { id: doc.id, ...doc.data() };
-    } catch (error) {
-      throw new Error(error.message);
-    }
+  console.log("Snapshot username empty?", snapshot.empty);
+  if (!snapshot.empty) {
+    const doc = snapshot.docs[0];
+    console.log("Usuario con username encontrado:", doc.data());
+    return { id: doc.id, ...doc.data() };
   }
 
-  
+  return null;
 }
 
 module.exports = Usuario;

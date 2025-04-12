@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 const SECRET_KEY = "m1_c14v3_53cr374_muy_larg4_y_d1f1c1l_d3_ad1v1nar";
 
 // Crear un nuevo usuario
-// Crear un nuevo usuario
 exports.crearUsuario = async (req, res) => {
+  
   try {
     const {
       nombre,
@@ -32,43 +32,42 @@ exports.crearUsuario = async (req, res) => {
 
     if (camposFaltantes.length > 0) {
       return res.status(400).json({
-        error: `Los siguientes campos son obligatorios: ${camposFaltantes.join(", ")}`,
+        error:
+        `Los siguientes campos son obligatorios:
+         ${camposFaltantes.join(", ")}`,
       });
     }
+    console.log("SE VA A EMPEZAR A CREAR USUARIO");
+    console.log("Contraseña recibida en API:", password);
+    console.log("SE VA A EMPEZAR A CREAR USUARIO2");
+    
+const usuarioConCorreo = await Usuario.getByCorreo(correo);
+if (usuarioConCorreo) {
+  return res.status(400).json({ error: "El correo ya está registrado." });
+}
 
-    // Verificar si el correo ya está registrado
-    const correoExistente = await Usuario.getByCorreo(correo);
-    if (correoExistente) {
-      return res.status(400).json({
-        error: "El correo electrónico ya está en uso.",
-      });
-    }
-
-    // Verificar si el nombre de usuario ya está registrado
-    const usernameExistente = await Usuario.getByUsername(username);
-    if (usernameExistente) {
-      return res.status(400).json({
-        error: "El nombre de usuario ya está en uso.",
-      });
-    }
-
-    // Encriptar la contraseña
-    const salt = bcrypt.genSaltSync(10);
-    const passwordEncriptada = bcrypt.hashSync(password, salt);
+const usuarioConUsername = await Usuario.getByUsername(username);
+if (usuarioConUsername) {
+  return res.status(400).json({ error: "El nombre de usuario ya está registrado." });
+}
 
     const nuevoUsuario = new Usuario(
-      nombre,
-      apellido,
-      correo,
-      passwordEncriptada,
-      username,
-      telefono,
-      fechaLogin,
-      rol,
-      estatus
+        nombre,
+        apellido,
+        correo,
+        password,
+        username,
+        telefono,
+        fechaLogin,
+        rol,
+        estatus,
     );
 
-    // Guardar el nuevo usuario
+    console.log(
+        "Contraseña encriptada antes de guardar:",
+        nuevoUsuario.password,
+    );
+
     const usuarioId = await nuevoUsuario.save();
 
     res.status(201).json({
