@@ -49,7 +49,6 @@ exports.crearProveedor = async (req, res) => {
     );
 
     const proveedorId = await nuevoProveedor.save();
-    await Usuario.updateById(idUsuario, {rol: "proveedor"});
 
     res.status(201).json({
       idProveedor: proveedorId,

@@ -5,6 +5,7 @@ const SECRET_KEY = "m1_c14v3_53cr374_muy_larg4_y_d1f1c1l_d3_ad1v1nar";
 
 // Crear un nuevo usuario
 exports.crearUsuario = async (req, res) => {
+  
   try {
     const {
       nombre,
@@ -36,8 +37,19 @@ exports.crearUsuario = async (req, res) => {
          ${camposFaltantes.join(", ")}`,
       });
     }
-
+    console.log("SE VA A EMPEZAR A CREAR USUARIO");
     console.log("Contraseña recibida en API:", password);
+    console.log("SE VA A EMPEZAR A CREAR USUARIO2");
+    
+const usuarioConCorreo = await Usuario.getByCorreo(correo);
+if (usuarioConCorreo) {
+  return res.status(400).json({ error: "El correo ya está registrado." });
+}
+
+const usuarioConUsername = await Usuario.getByUsername(username);
+if (usuarioConUsername) {
+  return res.status(400).json({ error: "El nombre de usuario ya está registrado." });
+}
 
     const nuevoUsuario = new Usuario(
         nombre,
