@@ -1,3 +1,4 @@
+const admin = require("firebase-admin");
 const Usuario = require("../models/usuario");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -73,6 +74,7 @@ if (usuarioConUsername) {
     res.status(201).json({
       id: usuarioId,
       mensaje: "Usuario registrado exitosamente",
+      uid,
     });
   } catch (error) {
     res.status(500).json({

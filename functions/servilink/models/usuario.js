@@ -149,8 +149,12 @@ class Usuario {
 
     return null;
   }
-}
 
+  /**
+   * Obtener usuario por correo o username.
+   * @param {string} correo - Correo o username del usuario.
+   * @return {Promise<Object>} Datos del usuario.
+   */
 static async getByCorreo(correo) {
   console.log("Buscando usuario con correo:", correo);
   const snapshot = await db.collection(USUARIOS_COLLECTION)
@@ -167,7 +171,11 @@ static async getByCorreo(correo) {
 
   return null;
 }
-
+  /**
+   * Obtener usuario por correo o username.
+   * @param {string} username - Correo o username del usuario.
+   * @return {Promise<Object>} Datos del usuario.
+   */
 static async getByUsername(username) {
   console.log("Buscando usuario con username:", username);
   const snapshot = await db.collection(USUARIOS_COLLECTION)
@@ -185,4 +193,5 @@ static async getByUsername(username) {
   return null;
 }
 
+}
 module.exports = Usuario;
