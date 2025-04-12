@@ -151,7 +151,11 @@ class Usuario {
   }
 
   /**
+<<<<<<< HEAD
    * Obtener usuario por correo o username.
+=======
+   * Obtener usuario por correo .
+>>>>>>> development
    * @param {string} correo - Correo o username del usuario.
    * @return {Promise<Object>} Datos del usuario.
    */
@@ -172,8 +176,13 @@ class Usuario {
     return null;
   }
   /**
+<<<<<<< HEAD
    * Obtener usuario por correo o username.
    * @param {string} username - Correo o username del usuario.
+=======
+   * Obtener usuario por username .
+   * @param {string} username - username del usuario.
+>>>>>>> development
    * @return {Promise<Object>} Datos del usuario.
    */
   static async getByUsername(username) {

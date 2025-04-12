@@ -47,12 +47,9 @@ exports.crearUsuario = async (req, res) => {
 
     const usuarioConUsername = await Usuario.getByUsername(username);
     if (usuarioConUsername) {
-      return res.
-          status(400).
-          json({
-            error:
-        "El nombre de usuario ya está registrado.",
-          });
+      return res.status(400).json({
+        error: "El nombre de usuario ya está registrado.",
+      });
     }
 
     const nuevoUsuario = new Usuario(

@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const db = admin.firestore();
+const Proveedor = require("../models/proveedor");
 
 const SERVICIOS_COLLECTION = "servicios_servilink";
 
@@ -53,7 +54,7 @@ class Servicio {
     const idServicio = servicioRef.id;
 
     await servicioRef.set({
-      idServicio: idServicio, // 🔹 Guardamos el ID en Firestore
+      idServicio: idServicio,
       nombre: this.nombre,
       descripcionProblema: this.descripcionProblema,
       precio: this.precio,
@@ -64,8 +65,11 @@ class Servicio {
       ubicacionPersona: this.ubicacionPersona,
     });
 
+    await Proveedor.agregarServicioAProveedor(this.idProveedor, idServicio);
+
     return idServicio;
   }
+
 
   /**
    * Obtiene todos los servicios de la colección.
@@ -139,6 +143,24 @@ class Servicio {
 
     await servicioRef.delete();
     return {id, mensaje: "Servicio eliminado correctamente"};
+  }
+
+
+  /**
+   * Elimina un servicio por su ID.
+   * @param {string} idsArray - IDs de los servicios.
+   * @return {Promise<Object>} Mensaje de eliminación.
+   */
+  static async getMultipleByIds(idsArray) {
+    const batch = await Promise.all(
+        idsArray.map(async (id) => {
+          const doc = await db.collection(SERVICIOS_COLLECTION).doc(id).get();
+          return doc.exists ? {id: doc.id, ...doc.data()} : null;
+        }),
+    );
+
+    // Elimina nulos por servicios que no existan
+    return batch.filter((s) => s);
   }
 }
 

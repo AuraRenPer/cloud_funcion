@@ -1,5 +1,5 @@
 const Servicio = require("../models/servicio");
-
+const Proveedor = require("../models/proveedor");
 // Crear un nuevo servicio
 exports.crearServicio = async (req, res) => {
   try {
@@ -39,6 +39,7 @@ exports.crearServicio = async (req, res) => {
     );
 
     const servicioId = await nuevoServicio.save();
+    await Proveedor.agregarServicioAProveedor(idProveedor, servicioId);
 
     res.status(201).json({
       idServicio: servicioId,

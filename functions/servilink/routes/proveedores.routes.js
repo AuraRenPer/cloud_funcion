@@ -10,6 +10,7 @@ const {
   eliminarProveedor,
   obtenerProveedoresPorCategoria,
   obtenerProveedoresConServicios,
+  obtenerPorIdUsuario,
 } = require("../controllers/proveedores");
 
 
@@ -20,5 +21,6 @@ router.put("/actualizarproveedor/:id", actualizarProveedor);
 router.delete("/eliminarproveedor/:id", eliminarProveedor);
 //router.get("/porcategoria/:idCategoria", obtenerProveedoresPorCategoria);
 router.get("/soloConServicios", obtenerProveedoresConServicios);
+router.get("/obtenerPorUsuario/:idUsuario", obtenerPorIdUsuario);
 
 module.exports = router;

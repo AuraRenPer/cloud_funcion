@@ -1,5 +1,6 @@
 const admin = require("firebase-admin");
 const db = admin.firestore();
+const Proveedor = require("../models/proveedor");
 
 const SERVICIOS_COLLECTION = "servicios";
 
@@ -15,7 +16,7 @@ class Servicio {
    * @param {string} duracion - Duración estimada del servicio.
    * @param {string} imagen - URL de la imagen del servicio.
    * @param {string} tipoServicio
-   * - Tipo de servicio (Lavado Express, Lavado Premium).
+   * - Tipo de servicio (Lavado, Mantenimiento, Reparación).
    * @param {string} idProveedor
    * - ID del proveedor que ofrece el servicio.
    * @param {Object|null} ubicacionPersona
@@ -53,7 +54,7 @@ class Servicio {
     const idServicio = servicioRef.id;
 
     await servicioRef.set({
-      idServicio: idServicio, // 🔹 Guardamos el ID en Firestore
+      idServicio: idServicio,
       nombre: this.nombre,
       descripcionProblema: this.descripcionProblema,
       precio: this.precio,
@@ -64,8 +65,11 @@ class Servicio {
       ubicacionPersona: this.ubicacionPersona,
     });
 
+    await Proveedor.agregarServicioAProveedor(this.idProveedor, idServicio);
+
     return idServicio;
   }
+
 
   /**
    * Obtiene todos los servicios de la colección.
@@ -95,14 +99,12 @@ class Servicio {
    * @return {Promise<Object[]>} Lista de servicios del proveedor.
    */
   static async getByProveedor(idProveedor) {
-    if (!idProveedor) {
-      throw new Error("El ID del proveedor es requerido.");
-    }
     const snapshot = await db.collection(SERVICIOS_COLLECTION)
         .where("idProveedor", "==", idProveedor)
         .get();
+
     if (snapshot.empty) {
-      return []; // Devolver array vacío en lugar de lanzar error
+      throw new Error("No hay servicios disponibles para este proveedor.");
     }
 
     return snapshot.docs.map((doc) => ({id: doc.id, ...doc.data()}));
@@ -141,6 +143,24 @@ class Servicio {
 
     await servicioRef.delete();
     return {id, mensaje: "Servicio eliminado correctamente"};
+  }
+
+
+  /**
+   * Elimina un servicio por su ID.
+   * @param {string} idsArray - IDs de los servicios.
+   * @return {Promise<Object>} Mensaje de eliminación.
+   */
+  static async getMultipleByIds(idsArray) {
+    const batch = await Promise.all(
+        idsArray.map(async (id) => {
+          const doc = await db.collection(SERVICIOS_COLLECTION).doc(id).get();
+          return doc.exists ? {id: doc.id, ...doc.data()} : null;
+        }),
+    );
+
+    // Elimina nulos por servicios que no existan
+    return batch.filter((s) => s);
   }
 }
 

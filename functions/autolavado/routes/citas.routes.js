@@ -8,10 +8,9 @@ const {
   obtenerCitasPorProveedor,
 } = require("../controllers/citas");
 
-
 router.post("/crearcita", crearCita);
 router.get("/obtenercitas", obtenerCitas);
-router.get("/obtenercitausuario/:idUsuario", obtenerCitasPorUsuario);
-router.get("/obtenercitaproveedor/:idProveedor", obtenerCitasPorProveedor);
+router.get("/obtenercitas/usuario/:idUsuario", obtenerCitasPorUsuario);
+router.get("/obtenercitas/proveedor/:idProveedor", obtenerCitasPorProveedor);
 
 module.exports = router;

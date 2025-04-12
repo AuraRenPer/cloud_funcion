@@ -10,8 +10,9 @@ const {
   eliminarServicio,
 } = require("../controllers/servicios");
 
+
 router.post("/crearservicio", crearServicio);
-router.get("/obtenerservicio", obtenerServicios);
+router.get("/obtenerservicios", obtenerServicios);
 router.get("/obtenerserviciosproveedor/:idProveedor",
     obtenerServiciosPorProveedor);
 router.put("/actualizarservicio/:id", actualizarServicio);

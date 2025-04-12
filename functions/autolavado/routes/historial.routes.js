@@ -3,13 +3,13 @@ const express = require("express");
 const router = express.Router();
 const {
   crearHistorial,
-  obtenerHistoriales,
+  obtenerHistorial,
   obtenerHistorialPorUsuario,
 } = require("../controllers/historial");
 
 
 router.post("/crearhistorial", crearHistorial);
-router.get("/obtenerhistoriales", obtenerHistoriales);
+router.get("/obtenerhistoriales", obtenerHistorial);
 router.get("/obtenerhistorialusuario/:idUsuario", obtenerHistorialPorUsuario);
 
 module.exports = router;

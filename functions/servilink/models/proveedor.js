@@ -124,6 +124,19 @@ class Proveedor {
     await db.collection(PROVEEDORES_COLLECTION).doc(id).delete();
     return {id, mensaje: "Proveedor eliminado correctamente"};
   }
+
+  /**
+   * Elimina un proveedor por su ID.
+   * @param {string} idProveedor - ID del proveedor.
+   * @param {string} idServicio - ID del idServicio.
+   * @return {Promise<Object>} Mensaje de eliminación.
+   */
+  static async agregarServicioAProveedor(idProveedor, idServicio) {
+    const proveedorRef = db.collection(PROVEEDORES_COLLECTION).doc(idProveedor);
+    await proveedorRef.update({
+      serviciosDisponibles: admin.firestore.FieldValue.arrayUnion(idServicio),
+    });
+  }
 }
 
 module.exports = Proveedor;
