@@ -1,5 +1,4 @@
 const Proveedor = require("../models/proveedor");
-const Usuario = require("../models/usuario");
 const Servicio = require("../models/servicio");
 
 // Crear un nuevo proveedor
