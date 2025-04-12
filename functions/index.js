@@ -22,13 +22,10 @@ const proveedoresRoutesServilink = require(
 );
 const citasRoutesServilink = require("./servilink/routes/citas.routes");
 const historialRoutesServilink = require("./servilink/routes/historial.routes");
-<<<<<<< HEAD
 const categoriasRoutesServilink = require(
     "./servilink/routes/categorias.routes");
 const solicitudesRoutesServilink = require(
     "./servilink/routes/solicitudes.routes");
-=======
->>>>>>> e9a82e4b (historial fixed)
 
 app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/servicios", serviciosRoutes);
@@ -43,11 +40,8 @@ app.use("/api/servicios_servilink", serviciosRoutesServilink);
 app.use("/api/proveedores_servilink", proveedoresRoutesServilink);
 app.use("/api/citas_servilink", citasRoutesServilink);
 app.use("/api/historial_servilink", historialRoutesServilink);
-<<<<<<< HEAD
 app.use("/api/categorias_servilink", categoriasRoutesServilink);
 app.use("/api/solicitudes_servilink", solicitudesRoutesServilink);
-=======
->>>>>>> e9a82e4b (historial fixed)
 
 exports.api = functions.https.onRequest(app);
 
